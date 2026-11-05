@@ -3,1109 +3,130 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Trening z ciągów arytmetycznych, geometrycznych i innych na poziomie matury podstawowej.">
-<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
-<title>Ciągi na maturę</title>
+<meta name="description" content="Aplikacje pomocne w nauce do matury z matematyki: ciągi i planimetria na poziomie podstawowym.">
+<title>Matematyka na maturę</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=JetBrains+Mono:wght@500&display=swap">
 <style>
-/* Layout: zeszyt w kratkę — kartka z zadaniem po lewej, pasek ze ściągą i postępem po prawej; na telefonie jedna kolumna */
+/* Spis aplikacji w tym samym zeszycie w kratkę co aplikacje */
 :root{
+  color-scheme:light;
   --paper:#f5f7fb; --surface:#ffffff; --ink:#1a2132; --muted:#5b6579; --line:#d8dee9; --grid:#e5eaf3;
-  --accent:#1f45c4; --accent-soft:#e3e9fc; --on-accent:#ffffff;
-  --ok:#1b7744; --ok-soft:#e1f3e8; --bad:#c42d2d; --bad-soft:#fbe5e3;
-  --mark:#fff0a0; --mark-ink:#3f3300; --margin:#f2c4c4;
+  --accent:#1f45c4; --accent-soft:#e3e9fc; --ok:#1b7744; --margin:#f2c4c4;
   --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
   --f-body:"Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
   --f-mono:"JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
-  --r:10px;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     --paper:#0f131b; --surface:#161b26; --ink:#e6eaf2; --muted:#9ba5b9; --line:#2a3244; --grid:#1b2130;
-    --accent:#86a2ff; --accent-soft:#1d2848; --on-accent:#0a0f1e;
-    --ok:#5fcb8d; --ok-soft:#11301f; --bad:#ff8077; --bad-soft:#3a1716;
-    --mark:#4b4212; --mark-ink:#fff2b3; --margin:#4a2629; color-scheme:dark;
+    --accent:#86a2ff; --accent-soft:#1d2848; --ok:#5fcb8d; --margin:#4a2629; color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
   --paper:#0f131b; --surface:#161b26; --ink:#e6eaf2; --muted:#9ba5b9; --line:#2a3244; --grid:#1b2130;
-  --accent:#86a2ff; --accent-soft:#1d2848; --on-accent:#0a0f1e;
-  --ok:#5fcb8d; --ok-soft:#11301f; --bad:#ff8077; --bad-soft:#3a1716;
-  --mark:#4b4212; --mark-ink:#fff2b3; --margin:#4a2629; color-scheme:dark;
+  --accent:#86a2ff; --accent-soft:#1d2848; --ok:#5fcb8d; --margin:#4a2629; color-scheme:dark;
 }
 *{box-sizing:border-box}
-body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;
-  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:20px 48px}
-.wrap{max-width:1120px;margin:0 auto;display:grid;gap:20px}
-header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px}
-.brand h1{font-family:var(--f-display);font-weight:800;font-size:clamp(1.8rem,4vw,2.5rem);line-height:1.05;margin:0;letter-spacing:-.01em;text-wrap:balance}
-.brand h1 .seq{color:var(--accent);font-family:var(--f-mono);font-weight:500;font-size:.5em;letter-spacing:.02em;vertical-align:middle;margin-left:.4em;white-space:nowrap}
-.brand p{margin:4px 0 0;color:var(--muted);max-width:60ch}
-.tally{display:flex;gap:18px;font-family:var(--f-mono);font-size:.85rem;color:var(--muted)}
-.tally b{display:block;font-size:1.35rem;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1.2}
-
-.controls{display:flex;flex-wrap:wrap;gap:12px 28px;align-items:center}
-.group{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
-.group > .lab{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700;margin-right:4px}
-.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:999px;background:var(--surface);padding:3px;gap:2px}
-.seg button{font:inherit;font-size:.92rem;border:0;background:transparent;color:var(--ink);padding:6px 14px;border-radius:999px;cursor:pointer}
-.seg button:hover{background:var(--accent-soft)}
-.seg button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);font-weight:700}
-.lvl-dots{display:inline-flex;gap:2px;margin-right:6px;vertical-align:1px}
-.lvl-dots i{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.25;display:inline-block}
-.lvl-dots i.on{opacity:1}
-
-.main{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:20px;align-items:start}
-@media (max-width:880px){.main{grid-template-columns:minmax(0,1fr)}}
-
-/* kartka w kratkę */
-.sheet{position:relative;background-color:var(--surface);
-  background-image:linear-gradient(var(--grid) 1px, transparent 1px),linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-  background-size:22px 22px;background-position:-1px -1px;
-  border:1px solid var(--line);border-radius:var(--r);padding:26px 26px 26px 44px;min-width:0;display:grid;gap:18px}
-.sheet::before{content:"";position:absolute;left:28px;top:0;bottom:0;width:2px;background:var(--margin)}
-@media (max-width:520px){.sheet{padding:20px 16px 20px 30px}.sheet::before{left:16px}}
-.eyebrow{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:.8rem;color:var(--muted)}
-.chip{font-weight:700;text-transform:uppercase;letter-spacing:.07em;font-size:.72rem;padding:3px 9px;border-radius:999px;background:var(--accent-soft);color:var(--accent)}
-.chip.l1,.chip.l2,.chip.l3{background:transparent;border:1px solid var(--line);color:var(--ink)}
-.tno{font-family:var(--f-mono);margin-left:auto}
-.prompt{font-size:1.14rem;line-height:1.7;margin:0;max-width:62ch}
-.prompt mjx-container, .steps mjx-container, .fields mjx-container{font-size:105%}
-
-.fields{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:flex-end}
-.field{display:flex;flex-wrap:wrap;align-items:center;gap:8px;min-width:0}
-.field .flabel{white-space:nowrap}
-.field input{font:inherit;font-family:var(--f-mono);font-size:1.05rem;width:9.5rem;max-width:52vw;padding:8px 10px;border:1.5px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
-.field.set input{width:12rem}
-.field input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
-.field.ok input{border-color:var(--ok);background:var(--ok-soft)}
-.field.bad input{border-color:var(--bad);background:var(--bad-soft)}
-.field .unit{color:var(--muted)}
-.field .tick{font-weight:700;width:1em}
-.field.ok .tick{color:var(--ok)} .field.bad .tick{color:var(--bad)}
-.choices{display:grid;gap:8px;max-width:520px}
-.choice{font:inherit;text-align:left;padding:10px 14px;border:1.5px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);cursor:pointer}
-.choice:hover{border-color:var(--accent)}
-.choice[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
-.choice.ok{border-color:var(--ok);background:var(--ok-soft)} .choice.bad{border-color:var(--bad);background:var(--bad-soft)}
-.inputhelp{font-size:.82rem;color:var(--muted);margin:-6px 0 0}
-
-.actions{display:flex;flex-wrap:wrap;gap:10px}
-.btn{font:inherit;font-weight:700;font-size:.95rem;padding:9px 16px;border-radius:8px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
-.btn:hover{border-color:var(--accent)}
-.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
-.btn.next{margin-left:auto}
-@media (max-width:520px){.btn.next{margin-left:0}}
-.btn:focus-visible,.seg button:focus-visible,.choice:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-
-.feedback{border-radius:8px;padding:10px 14px;font-weight:700}
-.feedback.ok{background:var(--ok-soft);color:var(--ok)}
-.feedback.bad{background:var(--bad-soft);color:var(--bad)}
-.feedback.info{background:var(--accent-soft);color:var(--accent)}
-.feedback span{font-weight:400;color:var(--ink)}
-.hints{display:grid;gap:8px}
-.hint{background:var(--mark);color:var(--mark-ink);padding:9px 14px;border-radius:4px 14px 6px 12px;max-width:62ch}
-.hint b{font-family:var(--f-display);margin-right:6px}
-
-.solution{border-top:2px dashed var(--line);padding-top:16px;display:grid;gap:12px}
-.solution h3,.side h2{font-family:var(--f-display);font-weight:700;font-size:1.1rem;margin:0}
-.steps{margin:0;padding-left:1.4em;display:grid;gap:8px;max-width:66ch}
-.steps li::marker{font-family:var(--f-mono);color:var(--accent)}
-.steps li{overflow-x:auto;overflow-y:hidden;min-width:0;max-width:100%}
-.answer{font-weight:700}
-.answer .lab{font-family:var(--f-display);color:var(--ok);margin-right:6px}
-.plotbox{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 12px 4px;overflow-x:auto}
-.plotbox .cap{font-size:.8rem;color:var(--muted);margin:0 0 4px}
-.plotbox svg{display:block;max-width:100%;height:auto}
-.plotbox .axis{stroke:var(--muted);stroke-width:1}
-.plotbox .guide{stroke:var(--line);stroke-width:1;stroke-dasharray:3 4}
-.plotbox .pt{fill:var(--accent)}
-.plotbox .pt.hi{fill:var(--ok)}
-.plotbox .ring{fill:none;stroke:var(--ok);stroke-width:2}
-.plotbox .vl{fill:var(--ink);font:12px var(--f-mono)}
-.plotbox .xl{fill:var(--muted);font:12px var(--f-mono)}
-.plotbox .zl{fill:var(--muted);font:11px var(--f-mono)}
-
-.side{display:grid;gap:16px;min-width:0}
-.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:grid;gap:10px;min-width:0}
-.formulas{display:grid;gap:12px}
-.formulas h4{margin:0;font-size:.74rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
-.formulas .f{overflow-x:auto;overflow-y:hidden;padding-block:2px}
-.progress{width:100%;border-collapse:collapse;font-size:.88rem}
-.progress th{font-weight:700;text-align:left;color:var(--muted);font-size:.74rem;text-transform:uppercase;letter-spacing:.06em;padding:4px 4px 6px}
-.progress th.c{text-align:center}
-.progress td{padding:6px 4px;border-top:1px solid var(--line)}
-.progress td.c{text-align:center;font-family:var(--f-mono);font-variant-numeric:tabular-nums}
-.cell{display:grid;gap:3px;justify-items:center}
-.bar{width:44px;height:5px;border-radius:3px;background:var(--grid);overflow:hidden}
-.bar i{display:block;height:100%;background:var(--ok)}
-.cell.none{color:var(--muted)}
-.reset{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:.85rem}
-.linkbtn{font:inherit;font-size:.85rem;background:none;border:0;color:var(--accent);cursor:pointer;padding:2px 0;text-decoration:underline}
-.linkbtn.danger{color:var(--bad)}
-.muted{color:var(--muted)}
-@media (prefers-reduced-motion: no-preference){
-  .sheet.enter{animation:slide .28s ease-out}
-  @keyframes slide{from{transform:translateY(6px);opacity:.4}to{transform:none;opacity:1}}
-}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;
+  padding:max(28px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) 48px max(16px, env(safe-area-inset-left, 0px))}
+.wrap{max-width:960px;margin:0 auto;display:grid;gap:28px}
+header h1{font-family:var(--f-display);font-weight:800;font-size:clamp(2rem,5vw,3rem);line-height:1.02;margin:0;letter-spacing:-.015em}
+header p{margin:8px 0 0;color:var(--muted);max-width:58ch;font-size:1.05rem}
+.apps{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,400px),1fr));gap:18px}
+.card{position:relative;display:grid;grid-template-rows:auto 1fr;text-decoration:none;color:inherit;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface);
+  transition:border-color .15s, transform .15s, box-shadow .15s}
+.card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 24px -14px rgba(31,69,196,.45)}
+.card:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.art{position:relative;height:150px;background-color:var(--surface);
+  background-image:linear-gradient(var(--grid) 1px, transparent 1px),linear-gradient(90deg, var(--grid) 1px, transparent 1px);background-size:22px 22px;background-position:-1px -1px;border-bottom:1px solid var(--line)}
+.art::before{content:"";position:absolute;left:26px;top:0;bottom:0;width:2px;background:var(--margin)}
+.art svg{position:absolute;inset:0;width:100%;height:100%}
+.art .s{stroke:var(--ink);stroke-width:2;fill:none;stroke-linejoin:round}
+.art .f{fill:var(--accent-soft)}
+.art .a{stroke:var(--accent);stroke-width:2.4;fill:none}
+.art .d{fill:var(--accent)}
+.art .g{stroke:var(--muted);stroke-width:1.2;stroke-dasharray:3 4}
+.art text{font:700 13px var(--f-display);fill:var(--ink)}
+.body{padding:18px 20px 20px;display:grid;gap:10px;align-content:start}
+.body h2{font-family:var(--f-display);font-weight:800;font-size:1.6rem;line-height:1.1;margin:0}
+.body h2 small{font-family:var(--f-mono);font-weight:500;font-size:.62em;color:var(--accent);margin-left:.45em;white-space:nowrap}
+.body p{margin:0;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:.75rem;font-weight:700;letter-spacing:.04em;padding:3px 9px;border-radius:999px;background:var(--accent-soft);color:var(--accent)}
+.foot{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px 16px;margin-top:4px;padding-top:12px;border-top:1px dashed var(--line)}
+.prog{font-family:var(--f-mono);font-size:.82rem;color:var(--muted)}
+.prog b{color:var(--ok)}
+.go{font-weight:700;color:var(--accent)}
+footer{color:var(--muted);font-size:.85rem}
+footer a{color:var(--accent)}
 </style>
 </head>
 <body>
-
-
 <div class="wrap">
-  <header class="top">
-    <div class="brand">
-      <h1>Ciągi na maturę <span class="seq">a₁, a₂, a₃, …</span></h1>
-      <p>Losowane zadania z ciągów na poziomie matury podstawowej. Każde zadanie sprawdzisz od razu, a gdy utkniesz, weźmiesz podpowiedź albo pełne rozwiązanie.</p>
-    </div>
-    <div class="tally" aria-label="Twoje wyniki">
-      <div><b id="t-ok">0</b>dobrze za 1. razem</div>
-      <div><b id="t-all">0</b>zadań</div>
-      <div><b id="t-streak">0</b>seria</div>
-    </div>
+  <header>
+    <h1>Matematyka na maturę</h1>
+    <p>Aplikacje do nauki na maturę podstawową. Losowane zadania na trzech poziomach, podpowiedzi i rozwiązania krok po kroku.</p>
   </header>
 
-  <div class="controls">
-    <div class="group" role="group" aria-label="Rodzaj ciągu">
-      <span class="lab">Ciąg</span>
-      <div class="seg" id="topic-seg">
-        <button type="button" data-topic="A" aria-pressed="true">Arytmetyczny</button>
-        <button type="button" data-topic="G" aria-pressed="false">Geometryczny</button>
-        <button type="button" data-topic="R" aria-pressed="false">Inne ciągi</button>
-        <button type="button" data-topic="X" aria-pressed="false">Wszystko naraz</button>
+  <main class="apps">
+    <a class="card" href="ciagi.html" data-store="ciagi-matura-v1">
+      <div class="art" aria-hidden="true">
+        <svg viewBox="0 0 400 150" preserveAspectRatio="xMidYMid meet">
+          <line class="g" x1="60" y1="120" x2="360" y2="120" style="stroke-dasharray:none"/>
+          <line class="g" x1="90" y1="120" x2="90" y2="104"/><line class="g" x1="135" y1="120" x2="135" y2="92"/><line class="g" x1="180" y1="120" x2="180" y2="80"/>
+          <line class="g" x1="225" y1="120" x2="225" y2="68"/><line class="g" x1="270" y1="120" x2="270" y2="56"/><line class="g" x1="315" y1="120" x2="315" y2="44"/>
+          <polyline class="a" points="90,104 135,92 180,80 225,68 270,56 315,44" style="stroke-dasharray:5 6;stroke-width:1.6"/>
+          <circle class="d" cx="90" cy="104" r="6"/><circle class="d" cx="135" cy="92" r="6"/><circle class="d" cx="180" cy="80" r="6"/>
+          <circle class="d" cx="225" cy="68" r="6"/><circle class="d" cx="270" cy="56" r="6"/><circle class="d" cx="315" cy="44" r="6"/>
+          <text x="82" y="140">a₁</text><text x="127" y="140">a₂</text><text x="172" y="140">a₃</text><text x="217" y="140">a₄</text>
+        </svg>
       </div>
-    </div>
-    <div class="group" role="group" aria-label="Poziom trudności">
-      <span class="lab">Poziom</span>
-      <div class="seg" id="level-seg">
-        <button type="button" data-level="1" aria-pressed="true"><span class="lvl-dots"><i class="on"></i><i></i><i></i></span>Łatwy</button>
-        <button type="button" data-level="2" aria-pressed="false"><span class="lvl-dots"><i class="on"></i><i class="on"></i><i></i></span>Średni</button>
-        <button type="button" data-level="3" aria-pressed="false"><span class="lvl-dots"><i class="on"></i><i class="on"></i><i class="on"></i></span>Trudny</button>
+      <div class="body">
+        <h2>Ciągi <small>a₁, a₂, a₃, …</small></h2>
+        <p>Ciąg arytmetyczny, geometryczny i inne ciągi: wzory na wyrazy i sumy, zadania z treścią.</p>
+        <div class="chips"><span class="chip">arytmetyczny</span><span class="chip">geometryczny</span><span class="chip">inne ciągi</span></div>
+        <div class="foot"><span class="prog">Jeszcze nic nie rozwiązano</span><span class="go">Otwórz →</span></div>
       </div>
-    </div>
-  </div>
+    </a>
 
-  <div class="main">
-    <article class="sheet" id="sheet" aria-live="polite">
-      <div class="eyebrow" id="eyebrow"></div>
-      <p class="prompt" id="prompt">Ładuję zadanie…</p>
-      <form id="answer-form" autocomplete="off" novalidate>
-        <div id="answer-area"></div>
-        <div class="actions" style="margin-top:16px">
-          <button class="btn primary" type="submit" id="btn-check">Sprawdź</button>
-          <button class="btn" type="button" id="btn-hint">Podpowiedź</button>
-          <button class="btn" type="button" id="btn-solve">Pokaż rozwiązanie</button>
-          <button class="btn next" type="button" id="btn-next">Następne zadanie →</button>
-        </div>
-      </form>
-      <div id="feedback" hidden></div>
-      <div class="hints" id="hints"></div>
-      <section class="solution" id="solution" hidden>
-        <h3>Rozwiązanie krok po kroku</h3>
-        <ol class="steps" id="steps"></ol>
-        <div class="answer" id="final"></div>
-        <div class="plotbox" id="plot" hidden></div>
-      </section>
-    </article>
+    <a class="card" href="planimetria.html" data-store="planimetria-matura-v1">
+      <div class="art" aria-hidden="true">
+        <svg viewBox="0 0 400 150" preserveAspectRatio="xMidYMid meet">
+          <circle class="s" cx="200" cy="75" r="58" style="stroke-width:1.6"/>
+          <polygon class="f" points="142,75 258,75 229,25"/>
+          <polygon class="s" points="142,75 258,75 229,25"/>
+          <polyline class="s" points="221,31 216,40 224,45" style="stroke-width:1.4"/>
+          <path class="a" d="M162 75 A20 20 0 0 0 160 66"/>
+          <circle class="d" cx="200" cy="75" r="3.5"/>
+          <polygon class="s" points="300,118 360,118 300,62" style="fill:var(--accent-soft)"/>
+          <polyline class="s" points="300,108 310,108 310,118" style="stroke-width:1.4"/>
+          <text x="128" y="80">A</text><text x="264" y="80">B</text><text x="230" y="18">C</text><text x="194" y="94">S</text>
+          <text x="48" y="60" style="font:500 13px var(--f-mono);fill:var(--accent)">α+β+γ</text><text x="48" y="78" style="font:500 13px var(--f-mono);fill:var(--accent)">= 180°</text>
+        </svg>
+      </div>
+      <div class="body">
+        <h2>Planimetria <small>△ ○ ▱</small></h2>
+        <p>Trójkąty, czworokąty i wielokąty, koło i okrąg, podobieństwo i twierdzenie Talesa — każde zadanie z rysunkiem.</p>
+        <div class="chips"><span class="chip">trójkąty</span><span class="chip">czworokąty</span><span class="chip">koło i okrąg</span><span class="chip">podobieństwo</span></div>
+        <div class="foot"><span class="prog">Jeszcze nic nie rozwiązano</span><span class="go">Otwórz →</span></div>
+      </div>
+    </a>
+  </main>
 
-    <aside class="side">
-      <section class="panel">
-        <h2>Ściąga</h2>
-        <div class="formulas" id="formulas"></div>
-      </section>
-      <section class="panel">
-        <h2>Twój postęp</h2>
-        <p class="muted" style="margin:0;font-size:.85rem">Zadania rozwiązane dobrze za pierwszym razem / wszystkie zadania.</p>
-        <table class="progress" id="progress"></table>
-        <div class="reset" id="reset-area"><button type="button" class="linkbtn" id="btn-reset">Wyzeruj postęp</button></div>
-      </section>
-    </aside>
-  </div>
+  <footer>Postęp zapisuje się tylko w tej przeglądarce, na tym urządzeniu.</footer>
 </div>
-
 <script>
-window.MathJax = {
-  tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
-  svg: { fontCache: 'global' },
-  options: { enableMenu: false },
-  startup: {
-    typeset: false,
-    ready: function () {
-      MathJax.startup.defaultReady();
-      MathJax.startup.promise.then(function () { if (window.__typesetAll) window.__typesetAll(); });
-    }
-  }
-};
+document.querySelectorAll('.card[data-store]').forEach(function (card) {
+  try {
+    var s = JSON.parse(localStorage.getItem(card.dataset.store) || 'null');
+    if (!s || !s.cells) return;
+    var ok = 0, all = 0;
+    Object.keys(s.cells).forEach(function (k) { ok += s.cells[k].ok || 0; all += s.cells[k].all || 0; });
+    if (all) card.querySelector('.prog').innerHTML = 'Twoje zadania: ' + all + ' · dobrze za 1. razem: <b>' + ok + '</b>';
+  } catch (e) {}
+});
 </script>
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js" defer></script>
-
-<script id="engine">
-/* ====== Silnik zadań (bez DOM) ====== */
-const t = String.raw;
-const ri = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
-const pick = a => a[Math.floor(Math.random() * a.length)];
-const nz = (a, b) => { let x; do { x = ri(a, b); } while (x === 0); return x; };
-const shuffle = a => { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
-const near = (a, b, tol = 1e-9) => Math.abs(a - b) <= tol * Math.max(1, Math.abs(b));
-
-function frac(x) { for (let d = 1; d <= 1000; d++) { const p = Math.round(x * d); if (Math.abs(p / d - x) < 1e-9) return [p, d]; } return null; }
-function D(x, dig = 6) { if (Object.is(x, -0)) x = 0; return String(+x.toFixed(dig)).replace('.', '{,}'); }
-function T(x) {
-  if (Object.is(x, -0) || Math.abs(x) < 1e-12) return '0';
-  if (Number.isInteger(x)) return String(x);
-  const f = frac(x);
-  if (f) { const [p, d] = f; return (p < 0 ? '-' : '') + t`\frac{${Math.abs(p)}}{${d}}`; }
-  return D(x);
-}
-const P = x => (x < 0 ? `(${T(x)})` : T(x));
-const PW = x => (x < 0 || !Number.isInteger(x) ? t`\left(${T(x)}\right)` : T(x));
-const PD = x => (x < 0 ? `(${D(x)})` : D(x));
-const M = s => t`\(${s}\)`;
-function txt(x) {
-  if (Number.isInteger(x)) return String(x).replace('-', '−');
-  const s = +x.toFixed(4);
-  if (Math.abs(s - x) < 1e-12) return String(s).replace('.', ',').replace('-', '−');
-  const f = frac(x); if (f) return (f[0] < 0 ? '−' : '') + Math.abs(f[0]) + '/' + f[1];
-  return String(+x.toFixed(6)).replace('.', ',').replace('-', '−');
-}
-function poly(cs, v = 'n') {
-  const deg = cs.length - 1; let s = '';
-  cs.forEach((c, i) => {
-    const p = deg - i; if (c === 0) return;
-    const a = Math.abs(c);
-    const vv = p === 0 ? '' : (p === 1 ? v : `${v}^{${p}}`);
-    const term = p === 0 ? T(a) : ((a === 1 ? '' : T(a)) + vv);
-    s += s === '' ? (c < 0 ? '-' : '') + term : ` ${c < 0 ? '-' : '+'} ${term}`;
-  });
-  return s || '0';
-}
-const pw = (b, e) => Math.pow(b, e);
-const cf = (c, v) => (c === 0 ? '0' : c === 1 ? v : c === -1 ? '-' + v : c + v);
-const ar = i => (i === 1 ? 'a_1' : `a_1 + ${cf(i - 1, 'r')}`);
-function quadSteps(a, b, c, v) {
-  const del = b * b - 4 * a * c, s = Math.sqrt(del);
-  const r1 = (-b - s) / (2 * a), r2 = (-b + s) / (2 * a);
-  return { del, s, r1, r2,
-    tex: t`\Delta = ${P(b)}^2 - 4\cdot ${P(a)}\cdot ${P(c)} = ${del},\quad \sqrt{\Delta} = ${T(s)},\quad ${v}_1 = \frac{${T(-b)} - ${T(s)}}{${T(2 * a)}} = ${T(r1)},\quad ${v}_2 = \frac{${T(-b)} + ${T(s)}}{${T(2 * a)}} = ${T(r2)}` };
-}
-
-function mk(o) { return Object.assign({ fields: [], choices: null, hints: [], steps: [], plot: null, verify: null }, o); }
-const F = (label, ans, extra) => Object.assign({ label, ans }, extra || {});
-const SET_HELP = 'Jeśli jest kilka odpowiedzi, oddziel je średnikiem, np. 3; −1.';
-
-/* ---------- CIĄG ARYTMETYCZNY ---------- */
-const GA = {
-1: [
-  function nthTerm() {
-    const a1 = ri(-9, 15), r = nz(-6, 7), n = ri(7, 25), an = a1 + (n - 1) * r;
-    return mk({ skill: 'n-ty wyraz',
-      text: t`W ciągu arytmetycznym ${M('(a_n)')} dane są ${M(`a_1 = ${a1}`)} oraz ${M(`r = ${r}`)}. Oblicz wyraz ${M(`a_{${n}}`)}.`,
-      fields: [F(M(`a_{${n}} =`), an)],
-      hints: [t`Skorzystaj ze wzoru ${M(t`a_n = a_1 + (n-1)\cdot r`)}.`, t`Różnicę mnożysz przez ${M(`${n}-1=${n - 1}`)}, a nie przez ${M(`${n}`)}.`],
-      steps: [t`Wzór na ${M('n')}-ty wyraz ciągu arytmetycznego: ${M(t`a_n = a_1 + (n-1)\cdot r`)}.`,
-        t`Podstawiamy ${M(`n = ${n}`)}: ${M(t`a_{${n}} = ${a1} + (${n}-1)\cdot ${P(r)} = ${a1} + ${n - 1}\cdot ${P(r)} = ${an}`)}.`],
-      answer: M(`a_{${n}} = ${an}`), plot: { f: k => a1 + (k - 1) * r, hi: n } });
-  },
-  function fromTerms() {
-    const a1 = ri(-10, 12), r = nz(-5, 6), n = ri(8, 15), an = a1 + (n - 1) * r;
-    const first = [0, 1, 2, 3].map(i => a1 + i * r);
-    return mk({ skill: 'różnica i n-ty wyraz',
-      text: t`Początkowe wyrazy ciągu arytmetycznego to ${M(first.join(',\\ ') + t`,\ \ldots`)}. Wyznacz różnicę ${M('r')} tego ciągu i oblicz ${M(`a_{${n}}`)}.`,
-      fields: [F(M('r ='), r), F(M(`a_{${n}} =`), an)],
-      hints: [t`Różnica to ${M('r = a_2 - a_1')}. Sprawdź ją na kolejnej parze wyrazów.`, t`Potem użyj wzoru ${M(t`a_n = a_1 + (n-1)r`)}.`],
-      steps: [t`${M(`r = a_2 - a_1 = ${first[1]} - ${P(first[0])} = ${r}`)} (sprawdzenie: ${M(`${first[2]} - ${P(first[1])} = ${r}`)}).`,
-        M(t`a_{${n}} = a_1 + ${n - 1}r = ${a1} + ${n - 1}\cdot ${P(r)} = ${an}`)],
-      answer: M(`r = ${r},\\quad a_{${n}} = ${an}`), plot: { f: k => a1 + (k - 1) * r, hi: n } });
-  },
-  function sumEnds() {
-    const a1 = ri(-5, 12), r = nz(-3, 5), n = ri(8, 30), an = a1 + (n - 1) * r, S = (a1 + an) * n / 2;
-    return mk({ skill: 'suma wyrazów',
-      text: t`Ciąg arytmetyczny ma ${M(`${n}`)} wyrazów. Pierwszy wyraz jest równy ${M(`${a1}`)}, a ostatni ${M(`${an}`)}. Oblicz sumę wszystkich wyrazów tego ciągu.`,
-      fields: [F(M(`S_{${n}} =`), S)],
-      hints: [t`Gdy znasz pierwszy i ostatni wyraz, użyj wzoru ${M(t`S_n = \frac{a_1 + a_n}{2}\cdot n`)}.`],
-      steps: [t`Wzór: ${M(t`S_n = \frac{a_1 + a_n}{2}\cdot n`)}.`,
-        M(t`S_{${n}} = \frac{${a1} + ${P(an)}}{2}\cdot ${n} = \frac{${a1 + an}}{2}\cdot ${n} = ${S}`)],
-      answer: M(`S_{${n}} = ${S}`), plot: { f: k => a1 + (k - 1) * r } });
-  },
-  function middle() {
-    const x = ri(-8, 15), d = nz(-9, 9), a = x - d, c = x + d, last = Math.random() < 0.35;
-    if (!last) return mk({ skill: 'warunek 2b = a + c',
-      text: t`Liczby ${M(`${a}`)}, ${M('x')}, ${M(`${c}`)} w podanej kolejności tworzą ciąg arytmetyczny. Oblicz ${M('x')}.`,
-      fields: [F(M('x ='), x)],
-      hints: [t`Środkowy wyraz ciągu arytmetycznego jest średnią arytmetyczną sąsiadów: ${M(t`b = \frac{a + c}{2}`)}.`],
-      steps: [t`Warunek ciągu arytmetycznego: ${M('2b = a + c')}, czyli ${M(`2x = ${a} + ${P(c)}`)}.`, M(t`2x = ${a + c} \;\Rightarrow\; x = ${x}`)],
-      answer: M(`x = ${x}`), plot: { f: k => a + (k - 1) * d, hi: 2 } });
-    return mk({ skill: 'warunek 2b = a + c',
-      text: t`Liczby ${M(`${a}`)}, ${M(`${x}`)}, ${M('y')} w podanej kolejności tworzą ciąg arytmetyczny. Oblicz ${M('y')}.`,
-      fields: [F(M('y ='), c)],
-      hints: [t`Zapisz warunek ${M('2b = a + c')} i wyznacz z niego ${M('c')}.`],
-      steps: [t`${M(`2\\cdot ${P(x)} = ${a} + y`)}, więc ${M(`y = ${2 * x} - ${P(a)} = ${c}`)}.`, t`Sposób 2: ${M(`r = ${x} - ${P(a)} = ${d}`)}, więc ${M(`y = ${x} + ${P(d)} = ${c}`)}.`],
-      answer: M(`y = ${c}`), plot: { f: k => a + (k - 1) * d, hi: 3 } });
-  }
-],
-2: [
-  function twoTerms() {
-    const a1 = ri(-10, 12), r = nz(-6, 6), k = ri(2, 5), m = k + ri(2, 6), ak = a1 + (k - 1) * r, am = a1 + (m - 1) * r;
-    return mk({ skill: 'a₁ i r z dwóch wyrazów',
-      text: t`W ciągu arytmetycznym ${M('(a_n)')} dane są ${M(`a_{${k}} = ${ak}`)} oraz ${M(`a_{${m}} = ${am}`)}. Wyznacz pierwszy wyraz ${M('a_1')} i różnicę ${M('r')} tego ciągu.`,
-      fields: [F(M('a_1 ='), a1), F(M('r ='), r)],
-      hints: [t`Między ${M(`a_{${k}}`)} a ${M(`a_{${m}}`)} jest ${M(`${m - k}`)} „kroków” o długości ${M('r')}: ${M(`a_{${m}} - a_{${k}} = ${m - k}r`)}.`, t`Gdy znasz ${M('r')}, cofnij się od ${M(`a_{${k}}`)}: ${M(`a_1 = a_{${k}} - ${cf(k - 1, 'r')}`)}.`],
-      steps: [M(t`a_{${m}} - a_{${k}} = (${m} - ${k})\,r \;\Rightarrow\; ${am} - ${P(ak)} = ${m - k}r \;\Rightarrow\; r = \frac{${am - ak}}{${m - k}} = ${r}`),
-        M(t`a_1 = a_{${k}} - ${cf(k - 1, 'r')} = ${ak} - ${k - 1 === 1 ? P(r) : (k - 1) + '\\cdot ' + P(r)} = ${a1}`)],
-      answer: M(`a_1 = ${a1},\\quad r = ${r}`), plot: { f: q => a1 + (q - 1) * r } });
-  },
-  function whichTerm() {
-    const a1 = ri(-20, 20), r = nz(-7, 7), n = ri(10, 45), V = a1 + (n - 1) * r;
-    return mk({ skill: 'który to wyraz?',
-      text: t`Ciąg arytmetyczny ${M('(a_n)')} ma pierwszy wyraz ${M(`a_1 = ${a1}`)} i różnicę ${M(`r = ${r}`)}. Który wyraz tego ciągu jest równy ${M(`${V}`)}?`,
-      fields: [F(M('n ='), n)],
-      hints: [t`Ułóż równanie ${M(`${a1} + (n-1)\\cdot ${P(r)} = ${V}`)} i rozwiąż je.`, t`Wynik musi być liczbą naturalną dodatnią.`],
-      steps: [M(t`a_n = ${a1} + (n-1)\cdot ${P(r)} = ${V}`), M(t`(n-1)\cdot ${P(r)} = ${V - a1} \;\Rightarrow\; n - 1 = ${n - 1} \;\Rightarrow\; n = ${n}`)],
-      answer: t`To wyraz ${M(`a_{${n}}`)}.`, plot: null,
-      verify: () => { const hits = []; for (let k = 1; k <= 500; k++) if (a1 + (k - 1) * r === V) hits.push(k); return hits.length === 1 && hits[0] === n; } });
-  },
-  function sumA1r() {
-    const a1 = ri(-15, 15), r = nz(-5, 6), n = ri(10, 30), S = n * a1 + n * (n - 1) * r / 2;
-    return mk({ skill: 'suma n wyrazów',
-      text: t`W ciągu arytmetycznym ${M('(a_n)')} dane są ${M(`a_1 = ${a1}`)} i ${M(`r = ${r}`)}. Oblicz sumę ${M(`${n}`)} początkowych wyrazów tego ciągu.`,
-      fields: [F(M(`S_{${n}} =`), S)],
-      hints: [t`Użyj wzoru ${M(t`S_n = \frac{2a_1 + (n-1)r}{2}\cdot n`)}. Nie musisz liczyć ostatniego wyrazu.`],
-      steps: [t`Wzór: ${M(t`S_n = \frac{2a_1 + (n-1)r}{2}\cdot n`)}.`,
-        M(t`S_{${n}} = \frac{2\cdot ${P(a1)} + ${n - 1}\cdot ${P(r)}}{2}\cdot ${n} = \frac{${2 * a1 + (n - 1) * r}}{2}\cdot ${n} = ${S}`)],
-      answer: M(`S_{${n}} = ${S}`), plot: { f: k => a1 + (k - 1) * r } });
-  },
-  function paramX() {
-    const x = ri(-6, 8), p = ri(-5, 8), k = pick([2, 3]);
-    let s = ri(-6, 9); if (((1 + k) * x + p + s) % 2 !== 0) s += 1;
-    const c = ((1 + k) * x + p + s) / 2;
-    return mk({ skill: 'wyrazy z niewiadomą',
-      text: t`Liczby ${M(poly([1, p], 'x'))}, ${M(`${c}`)}, ${M(poly([k, s], 'x'))} w podanej kolejności tworzą ciąg arytmetyczny. Oblicz ${M('x')}.`,
-      fields: [F(M('x ='), x)],
-      hints: [t`Środkowy wyraz razy 2 równa się sumie skrajnych: ${M(`2\\cdot ${P(c)} = (${poly([1, p], 'x')}) + (${poly([k, s], 'x')})`)}.`],
-      steps: [t`Warunek ${M('2b = a + c')}: ${M(`2\\cdot ${P(c)} = (${poly([1, p], 'x')}) + (${poly([k, s], 'x')})`)}.`,
-        M(t`${2 * c} = ${poly([1 + k, p + s], 'x')} \;\Rightarrow\; ${T(1 + k)}x = ${2 * c - p - s} \;\Rightarrow\; x = ${x}`),
-        t`Sprawdzenie: wyrazy to ${M(`${x + p},\\ ${c},\\ ${k * x + s}`)} – różnica ${M(`${c - x - p}`)}.`],
-      answer: M(`x = ${x}`), verify: () => 2 * c === (x + p) + (k * x + s) });
-  },
-  function word() {
-    if (Math.random() < 0.5) {
-      const f = ri(10, 24), d = ri(1, 4), n = ri(12, 30), an = f + (n - 1) * d, S = (f + an) * n / 2;
-      return mk({ skill: 'zadanie z treścią',
-        text: t`W amfiteatrze jest ${n} rzędów. W pierwszym rzędzie jest ${f} miejsc, a w każdym następnym o ${d} ${d === 1 ? 'miejsce' : 'miejsca'} więcej niż w poprzednim. Ile miejsc jest w ostatnim rzędzie, a ile w całym amfiteatrze?`,
-        fields: [F('ostatni rząd:', an, { unit: 'miejsc' }), F('razem:', S, { unit: 'miejsc' })],
-        hints: [t`Liczby miejsc w rzędach tworzą ciąg arytmetyczny: ${M(`a_1 = ${f}`)}, ${M(`r = ${d}`)}, ${M(`n = ${n}`)}.`, t`Ostatni rząd to ${M(`a_{${n}}`)}, wszystkie miejsca to ${M(`S_{${n}}`)}.`],
-        steps: [t`${M(`a_1 = ${f},\\ r = ${d}`)}. Ostatni rząd: ${M(`a_{${n}} = ${f} + ${n - 1}\\cdot ${d} = ${an}`)}.`,
-          t`Wszystkie miejsca: ${M(t`S_{${n}} = \frac{${f} + ${an}}{2}\cdot ${n} = ${S}`)}.`],
-        answer: t`Ostatni rząd: ${an} miejsc, razem: ${S} miejsc.`, plot: { f: k => f + (k - 1) * d } });
-    }
-    const s = ri(5, 30) * 10, d = pick([10, 20, 25, 30, 50]), n = pick([10, 12, 15, 18, 24]), an = s + (n - 1) * d, S = (s + an) * n / 2;
-    return mk({ skill: 'zadanie z treścią',
-      text: t`Ola oszczędza na wakacje. W pierwszym miesiącu odłożyła ${s} zł, a w każdym następnym miesiącu odkładała o ${d} zł więcej niż w poprzednim. Ile odłożyła w ostatnim, ${n}. miesiącu, a ile łącznie przez ${n} miesięcy?`,
-      fields: [F(`${n}. miesiąc:`, an, { unit: 'zł' }), F('łącznie:', S, { unit: 'zł' })],
-      hints: [t`Kwoty tworzą ciąg arytmetyczny: ${M(`a_1 = ${s}`)}, ${M(`r = ${d}`)}.`, t`Łączna kwota to ${M(`S_{${n}}`)}.`],
-      steps: [M(t`a_{${n}} = ${s} + ${n - 1}\cdot ${d} = ${an}`), M(t`S_{${n}} = \frac{${s} + ${an}}{2}\cdot ${n} = ${S}`)],
-      answer: t`W ${n}. miesiącu ${an} zł, łącznie ${S} zł.`, plot: { f: k => s + (k - 1) * d } });
-  }
-],
-3: [
-  function multiples() {
-    let lo, hi, d, label;
-    if (Math.random() < 0.6) { lo = 10; hi = 99; d = ri(3, 19); label = 'dwucyfrowych'; }
-    else { lo = 100; hi = 999; d = ri(11, 45); label = 'trzycyfrowych'; }
-    const first = Math.ceil(lo / d) * d, last = Math.floor(hi / d) * d, n = (last - first) / d + 1, S = (first + last) * n / 2;
-    return mk({ skill: 'suma wielokrotności',
-      text: t`Ile jest liczb ${label} podzielnych przez ${M(`${d}`)}? Oblicz sumę wszystkich takich liczb.`,
-      fields: [F('ile liczb:', n), F('suma:', S)],
-      hints: [t`Te liczby tworzą ciąg arytmetyczny o różnicy ${M(`${d}`)}. Znajdź najmniejszą i największą z nich.`, t`Liczbę wyrazów wyznacz z ${M(`a_n = a_1 + (n-1)\\cdot ${d}`)} – nie zapomnij o „+1”.`],
-      steps: [t`Najmniejsza taka liczba to ${M(`${first}`)}, największa ${M(`${last}`)}. Tworzą ciąg arytmetyczny: ${M(`a_1 = ${first},\\ r = ${d}`)}.`,
-        M(t`${last} = ${first} + (n-1)\cdot ${d} \;\Rightarrow\; n - 1 = ${n - 1} \;\Rightarrow\; n = ${n}`),
-        M(t`S_{${n}} = \frac{${first} + ${last}}{2}\cdot ${n} = ${S}`)],
-      answer: t`Jest ${n} takich liczb, ich suma to ${S}.`,
-      verify: () => { let c = 0, s = 0; for (let x = lo; x <= hi; x++) if (x % d === 0) { c++; s += x; } return c === n && s === S && n >= 3; } });
-  },
-  function snFormula() {
-    const p = pick([1, 2, 3, -1, -2]), q = ri(-6, 8), k = ri(6, 15), a1 = p + q, r = 2 * p, ak = p * (2 * k - 1) + q;
-    const Sn = n => p * n * n + q * n;
-    return mk({ skill: 'ciąg z wzoru na Sₙ',
-      text: t`Suma ${M('n')} początkowych wyrazów ciągu ${M('(a_n)')} jest dana wzorem ${M(`S_n = ${poly([p, q, 0])}`)} dla ${M(t`n \geq 1`)}. Wyznacz pierwszy wyraz, różnicę tego (arytmetycznego) ciągu oraz wyraz ${M(`a_{${k}}`)}.`,
-      fields: [F(M('a_1 ='), a1), F(M('r ='), r), F(M(`a_{${k}} =`), ak)],
-      hints: [t`${M('a_1 = S_1')}, a dla ${M(t`n \geq 2`)}: ${M('a_n = S_n - S_{n-1}')}.`, t`Policz ${M('a_2 = S_2 - S_1')} i odejmij ${M('a_1')}, żeby dostać ${M('r')}.`],
-      steps: [M(t`a_1 = S_1 = ${T(p)} + ${P(q)} = ${a1}`),
-        M(t`S_2 = ${Sn(2)},\quad a_2 = S_2 - S_1 = ${Sn(2)} - ${P(a1)} = ${a1 + r},\quad r = a_2 - a_1 = ${r}`),
-        t`Ogólnie ${M(`a_n = S_n - S_{n-1} = ${poly([2 * p, q - p])}`)}, więc ${M(`a_{${k}} = ${ak}`)}. Albo: ${M(`a_{${k}} = S_{${k}} - S_{${k - 1}} = ${Sn(k)} - ${P(Sn(k - 1))} = ${ak}`)}.`],
-      answer: M(`a_1 = ${a1},\\ r = ${r},\\ a_{${k}} = ${ak}`), plot: { f: n => p * (2 * n - 1) + q, hi: k },
-      verify: () => Sn(k) - Sn(k - 1) === ak && Sn(1) === a1 && Sn(2) - 2 * Sn(1) === r });
-  },
-  function system() {
-    let a1, r, i, j, k, X, Y, det;
-    do { a1 = ri(-10, 10); r = nz(-5, 6); i = ri(1, 4); j = ri(i + 2, i + 7); k = ri(2, 10);
-      det = (i + j - 2) - 2 * (k - 1); } while (k === i || k === j || det === 0);
-    X = 2 * a1 + (i + j - 2) * r; Y = a1 + (k - 1) * r;
-    return mk({ skill: 'układ równań',
-      text: t`W ciągu arytmetycznym ${M('(a_n)')} spełnione są warunki ${M(`a_{${i}} + a_{${j}} = ${X}`)} oraz ${M(`a_{${k}} = ${Y}`)}. Wyznacz ${M('a_1')} i ${M('r')}.`,
-      fields: [F(M('a_1 ='), a1), F(M('r ='), r)],
-      hints: [t`Zapisz każdy wyraz przez ${M('a_1')} i ${M('r')}, np. ${M(`a_{${j}} = a_1 + ${j - 1}r`)}.`, t`Otrzymasz układ dwóch równań z niewiadomymi ${M('a_1')}, ${M('r')}.`],
-      steps: [M(t`\begin{cases} (${ar(i)}) + (${ar(j)}) = ${X} \\ ${ar(k)} = ${Y} \end{cases} \;\Rightarrow\; \begin{cases} 2a_1 + ${i + j - 2}r = ${X} \\ a_1 = ${Y} - ${cf(k - 1, 'r')} \end{cases}`),
-        t`Podstawiamy: ${M(t`2(${Y} - ${cf(k - 1, 'r')}) + ${i + j - 2}r = ${X} \;\Rightarrow\; ${cf(det, 'r')} = ${X - 2 * Y} \;\Rightarrow\; r = ${r}`)}.`,
-        M(t`a_1 = ${Y} - ${k - 1 === 1 ? P(r) : (k - 1) + '\\cdot ' + P(r)} = ${a1}`)],
-      answer: M(`a_1 = ${a1},\\quad r = ${r}`), plot: { f: n => a1 + (n - 1) * r },
-      verify: () => (a1 + (i - 1) * r) + (a1 + (j - 1) * r) === X && a1 + (k - 1) * r === Y });
-  },
-  function threeNumbers() {
-    const m = ri(2, 10), r = ri(1, 9), S = 3 * m, Pr = m * m - r * r;
-    return mk({ skill: 'trzy liczby',
-      text: t`Trzy liczby tworzą rosnący ciąg arytmetyczny. Ich suma jest równa ${M(`${S}`)}, a iloczyn pierwszej i trzeciej liczby jest równy ${M(`${Pr}`)}. Wyznacz te liczby.`,
-      fields: [F('pierwsza:', m - r), F('druga:', m), F('trzecia:', m + r)],
-      hints: [t`Oznacz liczby jako ${M('b - r,\\ b,\\ b + r')}. Ich suma to ${M('3b')}.`, t`${M('(b-r)(b+r) = b^2 - r^2')}. Ciąg jest rosnący, więc ${M('r > 0')}.`],
-      steps: [t`Liczby: ${M('b-r,\\ b,\\ b+r')}. Suma: ${M(`3b = ${S}`)}, więc ${M(`b = ${m}`)}.`,
-        M(t`(${m} - r)(${m} + r) = ${Pr} \;\Rightarrow\; ${m * m} - r^2 = ${Pr} \;\Rightarrow\; r^2 = ${r * r}`),
-        t`Ciąg jest rosnący, więc ${M('r > 0')}, czyli ${M(`r = ${r}`)}.`],
-      answer: t`Liczby: ${M(`${m - r},\\ ${m},\\ ${m + r}`)}.`,
-      verify: () => (m - r) + m + (m + r) === S && (m - r) * (m + r) === Pr && r > 0 });
-  },
-  function findN() {
-    const a1 = ri(1, 12), r = ri(1, 6), n = ri(6, 25), V = n * a1 + n * (n - 1) * r / 2;
-    const q = quadSteps(r, 2 * a1 - r, -2 * V, 'n');
-    return mk({ skill: 'ile wyrazów?',
-      text: t`Ciąg arytmetyczny ma pierwszy wyraz ${M(`a_1 = ${a1}`)} i różnicę ${M(`r = ${r}`)}. Ile początkowych wyrazów tego ciągu trzeba dodać, aby otrzymać sumę ${M(`${V}`)}?`,
-      fields: [F(M('n ='), n)],
-      hints: [t`Podstaw do ${M(t`S_n = \frac{2a_1 + (n-1)r}{2}\cdot n`)} i przyrównaj do ${M(`${V}`)}.`, t`Wyjdzie równanie kwadratowe z niewiadomą ${M('n')}. Odrzuć rozwiązanie, które nie jest liczbą naturalną.`],
-      steps: [M(t`\frac{2\cdot ${a1} + (n-1)\cdot ${r}}{2}\cdot n = ${V} \;\Rightarrow\; (${poly([r, 2 * a1 - r])})\,n = ${2 * V}`),
-        M(t`${poly([r, 2 * a1 - r, -2 * V])} = 0`), M(q.tex),
-        t`${M('n')} musi być liczbą naturalną, więc ${M(`n = ${n}`)}.`],
-      answer: t`Trzeba dodać ${M(`${n}`)} wyrazów.`, plot: { f: k => a1 + (k - 1) * r },
-      verify: () => { let s = 0; for (let k = 1; k <= 200; k++) { s += a1 + (k - 1) * r; if (s === V) return k === n && near(q.r2, n) && q.r1 < 1; } return false; } });
-  },
-  function arithToGeo() {
-    for (let guard = 0; guard < 500; guard++) {
-      const m = ri(3, 9), r = ri(1, 5), q = pick([2, 3]), g1 = ri(1, 14);
-      const u = g1 - (m - r), v = g1 * q - m, w = g1 * q * q - (m + r);
-      if (u < 1 || v < 1 || w < 1 || u > 20 || v > 30 || w > 40) continue;
-      const A = m + u, B = m + w, C = (m + v) * (m + v);
-      const other = A - B - r; if (other > 0) continue;
-      const bq = -(A - B), cq = C - A * B, qs = quadSteps(1, bq, cq, 'r');
-      if (qs.del < 0) continue;
-      return mk({ skill: 'arytmetyczny → geometryczny',
-        text: t`Trzy liczby, których suma jest równa ${M(`${3 * m}`)}, tworzą rosnący ciąg arytmetyczny. Jeśli do pierwszej z nich dodamy ${M(`${u}`)}, do drugiej ${M(`${v}`)}, a do trzeciej ${M(`${w}`)}, to otrzymamy ciąg geometryczny. Wyznacz te liczby.`,
-        fields: [F('pierwsza:', m - r), F('druga:', m), F('trzecia:', m + r)],
-        hints: [t`Zapisz liczby jako ${M('b-r,\\ b,\\ b+r')}. Z sumy od razu wyznaczysz ${M('b')}.`, t`Nowe liczby tworzą ciąg geometryczny, więc kwadrat środkowej równa się iloczynowi skrajnych.`],
-        steps: [t`Liczby: ${M('b-r,\\ b,\\ b+r')}, suma ${M(`3b = ${3 * m}`)}, więc ${M(`b = ${m}`)}.`,
-          t`Po dodaniu: ${M(`${A} - r,\\ ${m + v},\\ ${B} + r`)}. Warunek ciągu geometrycznego: ${M(`${m + v}^2 = (${A} - r)(${B} + r)`)}.`,
-          M(t`${C} = ${poly([-1, A - B, A * B], 'r')} \;\Rightarrow\; ${poly([1, bq, cq], 'r')} = 0`), M(qs.tex),
-          t`Ciąg arytmetyczny jest rosnący, więc ${M('r > 0')}: ${M(`r = ${r}`)}. Liczby: ${M(`${m - r},\\ ${m},\\ ${m + r}`)}, a po dodaniu ${M(`${g1},\\ ${g1 * q},\\ ${g1 * q * q}`)} (iloraz ${M(`${q}`)}).`],
-        answer: t`Liczby: ${M(`${m - r},\\ ${m},\\ ${m + r}`)}.`,
-        verify: () => { const x = m - r, y = m, z = m + r; const roots = [qs.r1, qs.r2].filter(v2 => v2 > 1e-9); return x + y + z === 3 * m && (y + v) ** 2 === (x + u) * (z + w) && roots.length === 1 && near(roots[0], r); } });
-    }
-    return GA[3][3]();
-  }
-]
-};
-
-/* ---------- CIĄG GEOMETRYCZNY ---------- */
-const GG = {
-1: [
-  function nthTerm() {
-    let a1, q, n;
-    if (Math.random() < 0.7) { a1 = pick([1, 2, 3, 4, 5, -1, -2, -3]); q = pick([2, 3, -2, -3]); n = ri(4, Math.abs(q) === 3 ? 6 : 7); }
-    else { q = 0.5; n = ri(4, 7); a1 = pw(2, n - 1) * pick([1, 3, 5]); }
-    const an = a1 * pw(q, n - 1);
-    return mk({ skill: 'n-ty wyraz',
-      text: t`W ciągu geometrycznym ${M('(a_n)')} dane są ${M(`a_1 = ${a1}`)} oraz ${M(`q = ${T(q)}`)}. Oblicz wyraz ${M(`a_{${n}}`)}.`,
-      fields: [F(M(`a_{${n}} =`), an)],
-      hints: [t`Skorzystaj ze wzoru ${M(t`a_n = a_1\cdot q^{n-1}`)}.`, t`Potęga to ${M(`${n}-1 = ${n - 1}`)}. Najpierw potęgujesz iloraz, dopiero potem mnożysz przez ${M('a_1')}.`],
-      steps: [t`Wzór: ${M(t`a_n = a_1\cdot q^{n-1}`)}.`,
-        M(t`a_{${n}} = ${a1}\cdot ${PW(q)}^{${n - 1}} = ${a1}\cdot ${P(pw(q, n - 1))} = ${an}`)],
-      answer: M(`a_{${n}} = ${an}`), plot: { f: k => a1 * pw(q, k - 1), hi: n } });
-  },
-  function fromTerms() {
-    const opt = pick([[2, 1], [3, 1], [-2, 1], [-3, 1], [0.5, 2], [-0.5, 2], [1 / 3, 3]]);
-    const q = opt[0], den = opt[1];
-    const a1 = den === 1 ? pick([1, 2, 3, 4, -1, -2]) : pw(den, 5) * (den === 2 ? pick([1, 2, 3]) : 1);
-    const first = [0, 1, 2, 3].map(i => a1 * pw(q, i)), a6 = a1 * pw(q, 5);
-    return mk({ skill: 'iloraz i dalszy wyraz',
-      text: t`Początkowe wyrazy ciągu geometrycznego to ${M(first.map(T).join(',\\ ') + t`,\ \ldots`)}. Wyznacz iloraz ${M('q')} tego ciągu i oblicz ${M('a_6')}.`,
-      fields: [F(M('q ='), q), F(M('a_6 ='), a6)],
-      hints: [t`Iloraz to ${M(t`q = \frac{a_2}{a_1}`)} – dzielisz, a nie odejmujesz.`, t`${M('a_6 = a_4\\cdot q^2')}.`],
-      steps: [M(t`q = \frac{a_2}{a_1} = \frac{${T(first[1])}}{${T(first[0])}} = ${T(q)}`),
-        M(t`a_6 = a_4\cdot q^2 = ${P(first[3])}\cdot ${PW(q)}^2 = ${T(a6)}`)],
-      answer: M(`q = ${T(q)},\\quad a_6 = ${T(a6)}`), plot: { f: k => a1 * pw(q, k - 1), hi: 6 } });
-  },
-  function middle() {
-    const d = pick([1, 2, 3, 5]); let u = ri(1, 6), v = ri(1, 6); while (v === u) v = ri(1, 6);
-    const a = d * u * u, c = d * v * v, x = d * u * v;
-    return mk({ skill: 'warunek b² = a·c',
-      text: t`Liczby ${M(`${a}`)}, ${M('x')}, ${M(`${c}`)} w podanej kolejności tworzą ciąg geometryczny o wyrazach dodatnich. Oblicz ${M('x')}.`,
-      fields: [F(M('x ='), x)],
-      hints: [t`W ciągu geometrycznym kwadrat środkowego wyrazu równa się iloczynowi sąsiadów: ${M('b^2 = a\\cdot c')}.`],
-      steps: [M(t`x^2 = ${a}\cdot ${c} = ${a * c}`), t`Wyrazy są dodatnie, więc ${M(t`x = \sqrt{${a * c}} = ${x}`)}.`],
-      answer: M(`x = ${x}`), plot: { f: k => a * pw(v / u, k - 1), hi: 2 } });
-  },
-  function shortSum() {
-    const a1 = ri(1, 5), q = pick([2, 3, -2]), n = pick([4, 5]), terms = Array.from({ length: n }, (_, i) => a1 * pw(q, i)), S = terms.reduce((s, x) => s + x, 0);
-    return mk({ skill: 'suma kilku wyrazów',
-      text: t`Ciąg geometryczny ${M('(a_n)')} ma pierwszy wyraz ${M(`a_1 = ${a1}`)} i iloraz ${M(`q = ${q}`)}. Oblicz sumę ${M(`${n}`)} początkowych wyrazów tego ciągu.`,
-      fields: [F(M(`S_{${n}} =`), S)],
-      hints: [t`Możesz wypisać wyrazy i je dodać albo użyć wzoru ${M(t`S_n = a_1\cdot\frac{1-q^n}{1-q}`)}.`],
-      steps: [t`Wyrazy: ${M(terms.join(',\\ '))}.`, M(t`S_{${n}} = ${terms.map((x, i) => (i ? P(x) : T(x))).join(' + ')} = ${S}`),
-        t`Wzorem: ${M(t`S_{${n}} = ${a1}\cdot\frac{1 - ${PW(q)}^{${n}}}{1 - ${P(q)}} = ${a1}\cdot\frac{${1 - pw(q, n)}}{${1 - q}} = ${S}`)}.`],
-      answer: M(`S_{${n}} = ${S}`), plot: { f: k => a1 * pw(q, k - 1) } });
-  }
-],
-2: [
-  function twoTerms() {
-    if (Math.random() < 0.5) {
-      const k = ri(2, 3); let q = pick([2, 3, 0.5]), a1 = q === 0.5 ? pw(2, k + 2) * pick([1, 3]) : pick([1, 2, 3, 4, 5]);
-      const ak = a1 * pw(q, k - 1), am = a1 * pw(q, k + 1);
-      return mk({ skill: 'q i a₁ z dwóch wyrazów',
-        text: t`Ciąg geometryczny ${M('(a_n)')} ma wszystkie wyrazy dodatnie oraz ${M(`a_{${k}} = ${T(ak)}`)} i ${M(`a_{${k + 2}} = ${T(am)}`)}. Wyznacz iloraz ${M('q')} i pierwszy wyraz ${M('a_1')}.`,
-        fields: [F(M('q ='), q), F(M('a_1 ='), a1)],
-        hints: [t`${M(`a_{${k + 2}} = a_{${k}}\\cdot q^2`)}. Podziel wyrazy przez siebie.`, t`Z ${M('q^2')} wychodzą dwie wartości ${M('q')} – wybierz tę, przy której wszystkie wyrazy są dodatnie.`],
-        steps: [M(t`q^2 = \frac{a_{${k + 2}}}{a_{${k}}} = \frac{${T(am)}}{${T(ak)}} = ${T(q * q)}`),
-          t`${M(`q = ${T(q)}`)} lub ${M(`q = ${T(-q)}`)}. Wyrazy są dodatnie, więc ${M(`q = ${T(q)}`)}.`,
-          M(t`a_1 = \frac{a_{${k}}}{q^{${k - 1}}} = \frac{${T(ak)}}{${PW(q)}^{${k - 1}}} = ${T(a1)}`)],
-        answer: M(`q = ${T(q)},\\quad a_1 = ${T(a1)}`), plot: { f: n => a1 * pw(q, n - 1) } });
-    }
-    const q = pick([2, -2, 3, -3]), a1 = pick([1, 2, 3, -1, -2]), k = ri(1, 2), ak = a1 * pw(q, k - 1), am = a1 * pw(q, k + 2);
-    return mk({ skill: 'q i a₁ z dwóch wyrazów',
-      text: t`W ciągu geometrycznym ${M('(a_n)')} dane są ${M(`a_{${k}} = ${ak}`)} oraz ${M(`a_{${k + 3}} = ${am}`)}. Wyznacz iloraz ${M('q')} i pierwszy wyraz ${M('a_1')}.`,
-      fields: [F(M('q ='), q), F(M('a_1 ='), a1)],
-      hints: [t`${M(`a_{${k + 3}} = a_{${k}}\\cdot q^3`)}.`, t`Pierwiastek trzeciego stopnia z liczby ujemnej jest ujemny.`],
-      steps: [M(t`q^3 = \frac{${am}}{${ak}} = ${pw(q, 3)} \;\Rightarrow\; q = ${q}`), k === 1 ? t`${M(`a_1 = ${a1}`)} jest dane.` : M(t`a_1 = \frac{a_2}{q} = \frac{${ak}}{${P(q)}} = ${a1}`)],
-      answer: M(`q = ${q},\\quad a_1 = ${a1}`), plot: { f: n => a1 * pw(q, n - 1) } });
-  },
-  function sum() {
-    let a1, q, n;
-    if (Math.random() < 0.7) { a1 = nz(-4, 5); q = pick([2, 3, -2]); n = ri(5, q === 3 ? 6 : 8); }
-    else { q = 0.5; n = ri(4, 6); a1 = pw(2, n - 1) * pick([1, 3]); }
-    const S = a1 * (1 - pw(q, n)) / (1 - q);
-    return mk({ skill: 'suma n wyrazów',
-      text: t`W ciągu geometrycznym ${M('(a_n)')} dane są ${M(`a_1 = ${a1}`)} i ${M(`q = ${T(q)}`)}. Oblicz sumę ${M(`${n}`)} początkowych wyrazów tego ciągu.`,
-      fields: [F(M(`S_{${n}} =`), S)],
-      hints: [t`Wzór: ${M(t`S_n = a_1\cdot\frac{1-q^n}{1-q}`)} dla ${M(t`q \neq 1`)}.`, t`W liczniku jest ${M('q^n')}, a nie ${M('q^{n-1}')}.`],
-      steps: [M(t`S_{${n}} = ${a1}\cdot\frac{1 - ${PW(q)}^{${n}}}{1 - ${P(q)}} = ${a1}\cdot\frac{${T(1 - pw(q, n))}}{${T(1 - q)}} = ${T(S)}`)],
-      answer: M(`S_{${n}} = ${T(S)}`), plot: { f: k => a1 * pw(q, k - 1) },
-      verify: () => { let s = 0; for (let k = 1; k <= n; k++) s += a1 * pw(q, k - 1); return near(s, S) && Number.isInteger(S); } });
-  },
-  function paramX() {
-    const s = pick([2, 3]), p = s === 2 ? 3 * nz(-3, 3) : 4 * nz(-3, 3);
-    const x1 = p / (s - 1), x2 = -p / (s + 1);
-    return mk({ skill: 'wyrazy z niewiadomą',
-      text: t`Liczby ${M('x')}, ${M(poly([1, p], 'x'))}, ${M(`${s * s}x`)} w podanej kolejności tworzą ciąg geometryczny. Wyznacz wszystkie możliwe wartości ${M('x')}.`,
-      fields: [F(M('x ='), [x1, x2], { set: true })], help: SET_HELP,
-      hints: [t`Warunek: ${M(`(${poly([1, p], 'x')})^2 = x\\cdot ${s * s}x`)}.`, t`Prawa strona to ${M(`(${s}x)^2`)}. Przenieś na jedną stronę i użyj wzoru ${M('a^2 - b^2 = (a-b)(a+b)')}.`],
-      steps: [M(t`(${poly([1, p], 'x')})^2 = ${s * s}x^2 \;\Rightarrow\; (${poly([1, p], 'x')})^2 - (${s}x)^2 = 0`),
-        M(t`(${poly([1 - s, p], 'x')})(${poly([1 + s, p], 'x')}) = 0`),
-        t`${M(`x = ${T(x1)}`)} lub ${M(`x = ${T(x2)}`)}. Oba dają wyrazy różne od zera: ${M(`(${x1},\\ ${x1 + p},\\ ${s * s * x1})`)} oraz ${M(`(${x2},\\ ${x2 + p},\\ ${s * s * x2})`)}.`],
-      answer: M(`x = ${x1}\\ \\text{ lub }\\ x = ${x2}`),
-      verify: () => [x1, x2].every(x => Number.isInteger(x) && x !== 0 && (x + p) ** 2 === x * s * s * x) && x1 !== x2 });
-  },
-  function bacteria() {
-    const N0 = pick([100, 150, 200, 250, 300, 500]), q = pick([2, 3]), h = ri(4, q === 2 ? 8 : 6), N = N0 * pw(q, h);
-    return mk({ skill: 'zadanie z treścią',
-      text: t`Na początku doświadczenia w próbce było ${N0} bakterii. Co godzinę liczba bakterii ${q === 2 ? 'podwaja się' : 'potraja się'}. Ile bakterii będzie w próbce po ${h} godzinach?`,
-      fields: [F('liczba bakterii:', N)],
-      hints: [t`Liczba bakterii tworzy ciąg geometryczny o ilorazie ${M(`${q}`)}.`, t`Uważaj na numerację: po ${h} godzinach mnożysz przez ${M(`${q}`)} dokładnie ${h} razy.`],
-      steps: [t`Stan początkowy to ${M(`a_1 = ${N0}`)}, po 1 godzinie ${M('a_2')}, …, po ${h} godzinach ${M(`a_{${h + 1}}`)}.`,
-        M(t`a_{${h + 1}} = ${N0}\cdot ${q}^{${h}} = ${N0}\cdot ${pw(q, h)} = ${N}`)],
-      answer: t`Po ${h} godzinach będzie ${N} bakterii.`, plot: { f: k => N0 * pw(q, k - 1), hi: h + 1 } });
-  },
-  function whichTerm() {
-    const a1 = pick([1, 2, 3, 5]), q = pick([2, 3]), n = ri(5, q === 2 ? 10 : 8), V = a1 * pw(q, n - 1);
-    return mk({ skill: 'który to wyraz?',
-      text: t`Ciąg geometryczny ma pierwszy wyraz ${M(`a_1 = ${a1}`)} i iloraz ${M(`q = ${q}`)}. Który wyraz tego ciągu jest równy ${M(`${V}`)}?`,
-      fields: [F(M('n ='), n)],
-      hints: [t`Ułóż równanie ${M(`${a1 === 1 ? '' : a1 + '\\cdot '}${q}^{n-1} = ${V}`)}.`, t`Zapisz prawą stronę jako potęgę liczby ${M(`${q}`)}.`],
-      steps: [M(t`${a1 === 1 ? '' : a1 + '\\cdot '}${q}^{n-1} = ${V} \;\Rightarrow\; ${q}^{n-1} = ${pw(q, n - 1)} = ${q}^{${n - 1}}`), M(t`n - 1 = ${n - 1} \;\Rightarrow\; n = ${n}`)],
-      answer: t`To wyraz ${M(`a_{${n}}`)}.`, plot: { f: k => a1 * pw(q, k - 1), hi: n } });
-  }
-],
-3: [
-  function a2sum13() {
-    const q = pick([2, 3, 4]), a1 = ri(1, 6), a2 = a1 * q, B = a1 + a1 * q * q;
-    const qs = quadSteps(a2, -B, a2, 'q');
-    return mk({ skill: 'układ dla ciągu geometrycznego',
-      text: t`W ciągu geometrycznym ${M('(a_n)')} dane są ${M(`a_2 = ${a2}`)} oraz ${M(`a_1 + a_3 = ${B}`)}. Ciąg jest rosnący. Wyznacz jego iloraz ${M('q')}, pierwszy wyraz ${M('a_1')} i sumę czterech początkowych wyrazów.`,
-      fields: [F(M('q ='), q), F(M('a_1 ='), a1), F(M('S_4 ='), a1 * (1 + q + q * q + q * q * q))],
-      hints: [t`Zapisz ${M(t`a_1 = \frac{a_2}{q}`)} oraz ${M('a_3 = a_2\\cdot q')}.`, t`Pomnóż równanie przez ${M('q')} – dostaniesz równanie kwadratowe. Dwa rozwiązania dają dwa ciągi – wybierz rosnący.`],
-      steps: [M(t`\frac{${a2}}{q} + ${a2}q = ${B} \;\Big|\cdot q \;\Rightarrow\; ${poly([a2, -B, a2], 'q')} = 0`), M(qs.tex),
-        t`Dla ${M(`q = ${T(qs.r1)}`)} ciąg ${M(`${T(a2 / qs.r1)},\\ ${a2},\\ ${T(a2 * qs.r1)},\\ldots`)} jest malejący. Dla ${M(`q = ${q}`)} ciąg ${M(`${a1},\\ ${a2},\\ ${a2 * q},\\ldots`)} jest rosnący.`,
-        M(t`S_4 = ${a1}\cdot\frac{1 - ${q}^4}{1 - ${q}} = ${a1 * (1 + q + q * q + q * q * q)}`)],
-      answer: M(`q = ${q},\\ a_1 = ${a1},\\ S_4 = ${a1 * (1 + q + q * q + q * q * q)}`), plot: { f: n => a1 * pw(q, n - 1) },
-      verify: () => near(qs.r2, q) && near(qs.r1, 1 / q) && a1 * q === a2 && a1 + a1 * q * q === B });
-  },
-  function ball() {
-    const cfg = pick([[16, 1 / 2, 4], [10, 1 / 2, 3], [8, 3 / 4, 3], [32, 3 / 4, 4], [27, 2 / 3, 3], [81, 2 / 3, 4], [125, 3 / 5, 3]]);
-    const H = cfg[0], k = cfg[1], m = ri(2, cfg[2]);
-    const bm = H * pw(k, m), b1 = H * k, sum = b1 * (1 - pw(k, m)) / (1 - k), dist = H + 2 * sum;
-    return mk({ skill: 'odbijająca się piłka',
-      text: t`Piłkę upuszczono z wysokości ${M(`${H}`)} m. Po każdym odbiciu od ziemi wznosi się na wysokość równą ${M(T(k))} wysokości, z której spadła. Na jaką wysokość wzniesie się po ${m}. odbiciu? Jaką drogę przebędzie od upuszczenia do ${m + 1}. uderzenia o ziemię?`,
-      fields: [F(`wysokość po ${m}. odbiciu:`, bm, { unit: 'm', tol: 1e-6 }), F('droga:', dist, { unit: 'm', tol: 1e-6 })],
-      hints: [t`Wysokości po kolejnych odbiciach tworzą ciąg geometryczny: ${M(`b_1 = ${H}\\cdot ${T(k)} = ${D(b1)}`)}, ${M(`q = ${T(k)}`)}.`, t`Droga: najpierw spadek z ${H} m, potem ${m} razy w górę i w dół – każdą wysokość liczysz dwa razy.`],
-      steps: [M(t`b_{${m}} = ${H}\cdot\left(${T(k)}\right)^{${m}} = ${D(bm)}\ \text{m}`),
-        M(t`b_1 + \ldots + b_{${m}} = ${D(b1)}\cdot\frac{1 - \left(${T(k)}\right)^{${m}}}{1 - ${T(k)}} = ${D(sum)}\ \text{m}`),
-        M(t`\text{droga} = ${H} + 2\cdot ${D(sum)} = ${D(dist)}\ \text{m}`)],
-      answer: t`Wysokość ${M(`${D(bm)}`)} m, droga ${M(`${D(dist)}`)} m.`, plot: { f: n => H * pw(k, n - 1) },
-      verify: () => { let s = H, h = H; for (let i = 1; i <= m; i++) { h *= k; s += 2 * h; } return near(s, dist) && near(h, bm); } });
-  },
-  function threeNumbers() {
-    const q = pick([2, 3]), a1 = ri(1, 5), a2 = a1 * q, a3 = a2 * q, S = a1 + a2 + a3, Pr = a1 * a2 * a3;
-    const qs = quadSteps(a2, a2 - S, a2, 'q');
-    return mk({ skill: 'trzy liczby',
-      text: t`Trzy liczby dodatnie tworzą rosnący ciąg geometryczny. Ich iloczyn jest równy ${M(`${Pr}`)}, a suma ${M(`${S}`)}. Wyznacz te liczby.`,
-      fields: [F('pierwsza:', a1), F('druga:', a2), F('trzecia:', a3)],
-      hints: [t`Oznacz liczby ${M(t`\frac{b}{q},\ b,\ bq`)}. Ich iloczyn to ${M('b^3')}.`, t`Z sumy dostaniesz równanie kwadratowe z niewiadomą ${M('q')}.`],
-      steps: [M(t`\frac{b}{q}\cdot b\cdot bq = b^3 = ${Pr} \;\Rightarrow\; b = ${a2}`),
-        M(t`\frac{${a2}}{q} + ${a2} + ${a2}q = ${S} \;\Big|\cdot q \;\Rightarrow\; ${poly([a2, a2 - S, a2], 'q')} = 0`), M(qs.tex),
-        t`Ciąg jest rosnący, więc ${M('q > 1')}: ${M(`q = ${q}`)}. Liczby: ${M(`${a1},\\ ${a2},\\ ${a3}`)}.`],
-      answer: t`Liczby: ${M(`${a1},\\ ${a2},\\ ${a3}`)}.`,
-      verify: () => near(Math.cbrt(Pr), a2) && near(qs.r2, q) && S === a1 + a2 + a3 });
-  },
-  function a1FromSum() {
-    const q = pick([2, 3, -2]), n = ri(4, q === 3 ? 5 : 7), a1 = nz(-5, 6), S = a1 * (1 - pw(q, n)) / (1 - q);
-    return mk({ skill: 'a₁ z sumy',
-      text: t`Suma ${M(`${n}`)} początkowych wyrazów ciągu geometrycznego o ilorazie ${M(`q = ${q}`)} jest równa ${M(`${S}`)}. Oblicz pierwszy wyraz i wyraz ${M(`a_{${n}}`)} tego ciągu.`,
-      fields: [F(M('a_1 ='), a1), F(M(`a_{${n}} =`), a1 * pw(q, n - 1))],
-      hints: [t`Podstaw dane do ${M(t`S_n = a_1\cdot\frac{1-q^n}{1-q}`)} i wyznacz ${M('a_1')}.`],
-      steps: [M(t`${S} = a_1\cdot\frac{1 - ${P(q)}^{${n}}}{1 - ${P(q)}} = a_1\cdot\frac{${1 - pw(q, n)}}{${1 - q}} = ${T((1 - pw(q, n)) / (1 - q))}\,a_1`),
-        M(t`a_1 = ${a1},\qquad a_{${n}} = ${a1}\cdot ${P(q)}^{${n - 1}} = ${a1 * pw(q, n - 1)}`)],
-      answer: M(`a_1 = ${a1},\\quad a_{${n}} = ${a1 * pw(q, n - 1)}`), plot: { f: k => a1 * pw(q, k - 1), hi: n },
-      verify: () => Number.isInteger(S) });
-  }
-]
-};
-
-/* ---------- INNE CIĄGI ---------- */
-function formulaPool() {
-  const k = ri(3, 9);
-  return pick([
-    () => { const a = pick([1, 2, -1]), b = ri(-6, 6), c = ri(-9, 9); const f = n => a * n * n + b * n + c; return { tex: poly([a, b, c]), f, k, sub: t`${a === 1 ? '' : a === -1 ? '-' : T(a) + '\\cdot '}${k}^2 ${b < 0 ? '-' : '+'} ${Math.abs(b)}\cdot ${k} ${c < 0 ? '-' : '+'} ${Math.abs(c)}` }; },
-    () => { const a = ri(1, 4), b = ri(-5, 5); const f = n => pw(-1, n) * (a * n + b); return { tex: t`(-1)^n\cdot(${poly([a, b])})`, f, k, sub: t`(-1)^{${k}}\cdot(${a === 1 ? '' : a + '\\cdot '}${k} ${b < 0 ? '-' : '+'} ${Math.abs(b)})` }; },
-    () => { const kk = ri(3, 7), a = ri(1, 5); const f = n => pw(2, n) - a * n; return { tex: t`2^n - ${a === 1 ? '' : a}n`, f, k: kk, sub: t`2^{${kk}} - ${a === 1 ? '' : a + '\\cdot '}${kk}` }; },
-    () => { const a = ri(1, 4), b = ri(-3, 6), s = ri(1, 5); const f = n => (a * n + b) / (n + s); return { tex: t`\frac{${poly([a, b])}}{${poly([1, s])}}`, f, k, sub: t`\frac{${a === 1 ? '' : a + '\\cdot '}${k} ${b < 0 ? '-' : '+'} ${Math.abs(b)}}{${k} + ${s}}` }; }
-  ])();
-}
-const GR = {
-1: [
-  function formula() {
-    const o = formulaPool(), val = o.f(o.k);
-    return mk({ skill: 'wyraz ze wzoru ogólnego',
-      text: t`Ciąg ${M('(a_n)')} jest określony wzorem ${M(`a_n = ${o.tex}`)} dla ${M(t`n \geq 1`)}. Oblicz wyraz ${M(`a_{${o.k}}`)}.`,
-      fields: [F(M(`a_{${o.k}} =`), val)], help: 'Ułamek wpisz jako np. 7/9.',
-      hints: [t`Wstaw ${M(`n = ${o.k}`)} w miejsce każdego ${M('n')} we wzorze.`, t`Pamiętaj o kolejności działań: najpierw potęgowanie, potem mnożenie.`],
-      steps: [M(t`a_{${o.k}} = ${o.sub} = ${T(val)}`)],
-      answer: M(`a_{${o.k}} = ${T(val)}`), plot: { f: o.f, hi: o.k } });
-  },
-  function recursionLinear() {
-    const a1 = ri(-3, 5), p = pick([2, 3, -1, -2]), q = ri(-4, 5);
-    const a = [a1]; for (let i = 0; i < 3; i++) a.push(p * a[i] + q);
-    const rec = t`a_{n+1} = ${p === 1 ? '' : p === -1 ? '-' : p}a_n ${q < 0 ? '-' : '+'} ${Math.abs(q)}`;
-    return mk({ skill: 'ciąg rekurencyjny',
-      text: t`Ciąg ${M('(a_n)')} jest określony wzorem rekurencyjnym: ${M(`a_1 = ${a1}`)}, ${M(rec)} dla ${M(t`n \geq 1`)}. Oblicz ${M('a_4')}.`,
-      fields: [F(M('a_4 ='), a[3])],
-      hints: [t`Wzór rekurencyjny podaje kolejny wyraz na podstawie poprzedniego. Licz po kolei: ${M('a_2')}, potem ${M('a_3')}, potem ${M('a_4')}.`],
-      steps: [1, 2, 3].map(i => M(t`a_{${i + 1}} = ${p}\cdot ${P(a[i - 1])} ${q < 0 ? '-' : '+'} ${Math.abs(q)} = ${a[i]}`)),
-      answer: M(`a_4 = ${a[3]}`), plot: { f: n => { let x = a1; for (let i = 1; i < n; i++) x = p * x + q; return x; }, hi: 4 },
-      verify: () => Number.isFinite(a[3]) });
-  },
-  function fibLike() {
-    const a1 = ri(-3, 5), a2 = ri(-2, 6), sign = pick([1, -1]);
-    const a = [a1, a2]; for (let i = 2; i < 6; i++) a.push(a[i - 1] + sign * a[i - 2]);
-    const rec = sign === 1 ? 'a_{n+2} = a_{n+1} + a_n' : 'a_{n+2} = a_{n+1} - a_n';
-    return mk({ skill: 'ciąg rekurencyjny',
-      text: t`Ciąg ${M('(a_n)')} jest określony wzorem rekurencyjnym: ${M(`a_1 = ${a1}`)}, ${M(`a_2 = ${a2}`)}, ${M(rec)} dla ${M(t`n \geq 1`)}. Oblicz ${M('a_6')}.`,
-      fields: [F(M('a_6 ='), a[5])],
-      hints: [t`Każdy wyraz od trzeciego liczysz z dwóch poprzednich. Licz po kolei ${M('a_3, a_4, a_5, a_6')}.`],
-      steps: [2, 3, 4, 5].map(i => M(t`a_{${i + 1}} = a_{${i}} ${sign === 1 ? '+' : '-'} a_{${i - 1}} = ${a[i - 1]} ${sign === 1 ? '+' : '-'} ${P(a[i - 2])} = ${a[i]}`)),
-      answer: M(`a_6 = ${a[5]}`), plot: { f: n => a[n - 1], N: 6, hi: 6 } });
-  },
-  function whichTermSimple() {
-    const c = ri(-9, 9), n = ri(4, 12), V = n * n + c;
-    return mk({ skill: 'który to wyraz?',
-      text: t`Ciąg ${M('(a_n)')} jest określony wzorem ${M(`a_n = ${poly([1, 0, c])}`)} dla ${M(t`n \geq 1`)}. Który wyraz tego ciągu jest równy ${M(`${V}`)}?`,
-      fields: [F(M('n ='), n)],
-      hints: [t`Rozwiąż równanie ${M(`${poly([1, 0, c])} = ${V}`)}. Numer wyrazu musi być liczbą naturalną dodatnią.`],
-      steps: [M(t`${poly([1, 0, c])} = ${V} \;\Rightarrow\; n^2 = ${n * n} \;\Rightarrow\; n = ${n}\ \text{lub}\ n = ${-n}`), t`Numer wyrazu jest dodatni, więc ${M(`n = ${n}`)}.`],
-      answer: t`To wyraz ${M(`a_{${n}}`)}.`, plot: { f: k => k * k + c, hi: n } });
-  }
-],
-2: [
-  function monotonic() {
-    const kind = ri(0, 6); let tex, ans, why, f;
-    if (kind === 0) { const p = nz(-5, 5), q = ri(-9, 9); f = n => p * n + q; tex = poly([p, q]); ans = p > 0 ? 0 : 1; why = t`${M(`a_{n+1} - a_n = ${T(p)}(n+1) ${q < 0 ? '-' : '+'} ${Math.abs(q)} - (${poly([p, q])}) = ${p}`)} – ${p > 0 ? 'dodatnie' : 'ujemne'} dla każdego ${M('n')}.`; }
-    else if (kind === 1) { const c = ri(0, 4); f = n => pw(-1, n) * (n + c); tex = t`(-1)^n\cdot(${poly([1, c])})`; ans = 2; why = t`${M(`a_1 = ${f(1)},\\ a_2 = ${f(2)},\\ a_3 = ${f(3)}`)} – wyrazy na przemian rosną i maleją.`; }
-    else if (kind === 2) { const k = ri(5, 9); f = n => n * n - k * n; tex = poly([1, -k, 0]); ans = 2; why = t`${M(`a_{n+1} - a_n = 2n + 1 - ${k} = 2n - ${k - 1}`)} – ujemne dla małych ${M('n')} (np. ${M(`a_1 = ${f(1)},\\ a_2 = ${f(2)}`)}), dodatnie dla dużych (np. ${M(`a_${k - 1} = ${f(k - 1)},\\ a_${k} = ${f(k)}`)}).`; }
-    else if (kind === 3) { const k = ri(0, 6), up = Math.random() < 0.5; f = up ? n => n * n + k * n : n => -n * n + k; tex = up ? poly([1, k, 0]) : poly([-1, 0, k]); ans = up ? 0 : 1; why = up ? t`${M(`a_{n+1} - a_n = 2n + 1${k ? ' + ' + k : ''} > 0`)} dla każdego ${M('n')}.` : t`${M('a_{n+1} - a_n = -(n+1)^2 + n^2 = -2n - 1 < 0')} dla każdego ${M('n')}.`; }
-    else if (kind === 4) { const c = ri(2, 5); f = n => c * pw(2, n); tex = t`${c}\cdot 2^n`; ans = 0; why = t`${M(t`\frac{a_{n+1}}{a_n} = 2 > 1`)}, a wszystkie wyrazy są dodatnie, więc każdy kolejny jest większy.`; }
-    else if (kind === 5) { const c = pick([16, 32, 48, 64]); f = n => c * pw(0.5, n); tex = t`${c}\cdot\left(\frac{1}{2}\right)^n`; ans = 1; why = t`Wyrazy są dodatnie i ${M(t`\frac{a_{n+1}}{a_n} = \frac{1}{2} < 1`)}, więc każdy kolejny jest mniejszy.`; }
-    else { const b = pick([-2, -3]); f = n => pw(b, n); tex = t`(${b})^n`; ans = 2; why = t`Iloraz jest ujemny, więc znaki się zmieniają: ${M(`a_1 = ${f(1)},\\ a_2 = ${f(2)},\\ a_3 = ${f(3)}`)}.`; }
-    const labels = ['rosnący', 'malejący', 'ani rosnący, ani malejący'];
-    return mk({ skill: 'monotoniczność',
-      text: t`Ciąg ${M('(a_n)')} jest określony wzorem ${M(`a_n = ${tex}`)} dla ${M(t`n \geq 1`)}. Ten ciąg jest:`,
-      choices: labels, ans,
-      hints: [t`Zbadaj znak różnicy ${M('a_{n+1} - a_n')} albo wypisz kilka pierwszych wyrazów i zobacz, co się dzieje.`],
-      steps: [why, t`Ciąg jest ${labels[ans]}.`], answer: t`Odpowiedź: <b>${labels[ans]}</b>.`, plot: { f } });
-  },
-  function typeCheck() {
-    const kind = ri(0, 4); let tex, ans, why, f;
-    if (kind === 0) { const p = nz(-5, 5), q = ri(-8, 8); f = n => p * n + q; tex = poly([p, q]); ans = 0; why = t`${M(`a_{n+1} - a_n = ${p}`)} – różnica jest stała, więc ciąg jest arytmetyczny (${M(`r = ${p}`)}).`; }
-    else if (kind === 1) { const c = pick([2, 3, 5, -1]), b = pick([2, 3, -2]); f = n => c * pw(b, n - 1); tex = t`${c === -1 ? '-' : c + '\\cdot '}${P(b)}^{n-1}`; ans = 1; why = t`${M(t`\frac{a_{n+1}}{a_n} = ${b}`)} – iloraz jest stały, więc ciąg jest geometryczny (${M(`q = ${b}`)}).`; }
-    else if (kind === 2) { const c = ri(-5, 5); f = n => n * n + c; tex = poly([1, 0, c]); ans = 2; why = t`${M(`a_1 = ${f(1)},\\ a_2 = ${f(2)},\\ a_3 = ${f(3)}`)}. Różnice: ${M(`${f(2) - f(1)}`)} i ${M(`${f(3) - f(2)}`)} – nie są równe, więc ciąg nie jest arytmetyczny. ${M(`a_2^2 = ${f(2) ** 2} \\neq a_1\\cdot a_3 = ${f(1) * f(3)}`)}, więc nie jest geometryczny.`; }
-    else if (kind === 3) { const c = nz(-3, 4); f = n => pw(2, n) + c; tex = t`2^n ${c < 0 ? '-' : '+'} ${Math.abs(c)}`; ans = 2; why = t`${M(`a_1 = ${f(1)},\\ a_2 = ${f(2)},\\ a_3 = ${f(3)}`)}. Różnice ${M(`${f(2) - f(1)}`)} i ${M(`${f(3) - f(2)}`)} są różne, a ${M(`a_2^2 = ${f(2) ** 2} \\neq a_1\\cdot a_3 = ${f(1) * f(3)}`)}.`; }
-    else { const c = pick([6, 12, 60]); f = n => c / n; tex = t`\frac{${c}}{n}`; ans = 2; why = t`${M(`a_1 = ${c},\\ a_2 = ${c / 2},\\ a_3 = ${c / 3}`)}. Różnice ${M(`${T(c / 2 - c)}`)} i ${M(`${T(c / 3 - c / 2)}`)} są różne, ilorazy ${M(T(1 / 2))} i ${M(T(2 / 3))} też.`; }
-    const labels = ['arytmetyczny', 'geometryczny', 'ani arytmetyczny, ani geometryczny'];
-    return mk({ skill: 'arytmetyczny czy geometryczny?',
-      text: t`Ciąg ${M('(a_n)')} jest określony wzorem ${M(`a_n = ${tex}`)} dla ${M(t`n \geq 1`)}. Ten ciąg jest:`,
-      choices: labels, ans,
-      hints: [t`Policz ${M('a_1, a_2, a_3')}. Sprawdź, czy różnice są równe (arytmetyczny) albo czy ilorazy są równe (geometryczny).`],
-      steps: [why], answer: t`Odpowiedź: <b>${labels[ans]}</b>.`, plot: { f },
-      verify: () => { const v = [1, 2, 3, 4].map(f), ar = near(v[1] - v[0], v[2] - v[1]) && near(v[2] - v[1], v[3] - v[2]), ge = v[0] !== 0 && near(v[1] / v[0], v[2] / v[1]) && near(v[2] / v[1], v[3] / v[2]); return (ans === 0 && ar && !ge) || (ans === 1 && ge && !ar) || (ans === 2 && !ar && !ge); } });
-  },
-  function negativeCount() {
-    const n1 = ri(1, 4), n2 = n1 + ri(3, 9), neg = Math.random() < 0.6, sgn = neg ? 1 : -1;
-    const f = n => sgn * (n - n1) * (n - n2), count = n2 - n1 - 1;
-    return mk({ skill: neg ? 'wyrazy ujemne' : 'wyrazy dodatnie',
-      text: t`Ciąg ${M('(a_n)')} jest określony wzorem ${M(`a_n = ${poly([sgn, -sgn * (n1 + n2), sgn * n1 * n2])}`)} dla ${M(t`n \geq 1`)}. Ile wyrazów tego ciągu jest ${neg ? 'ujemnych' : 'dodatnich'}?`,
-      fields: [F('liczba wyrazów:', count)],
-      hints: [t`Rozwiąż nierówność ${M(`${poly([sgn, -sgn * (n1 + n2), sgn * n1 * n2])} ${neg ? '<' : '>'} 0`)}: znajdź miejsca zerowe i naszkicuj parabolę.`, t`Licz tylko liczby naturalne ${M(t`n \geq 1`)} – i nie wliczaj miejsc zerowych.`],
-      steps: [t`Miejsca zerowe: ${M(`n = ${n1}`)} i ${M(`n = ${n2}`)} (${M(`a_n = ${sgn === 1 ? '' : '-'}(n - ${n1})(n - ${n2})`)}).`,
-        t`Ramiona paraboli skierowane ${neg ? 'w górę' : 'w dół'}, więc ${M(`a_n ${neg ? '<' : '>'} 0`)} dla ${M(`n \\in (${n1},\\ ${n2})`)}.`,
-        t`Liczby naturalne w tym przedziale: ${M(`${n1 + 1}, \\ldots, ${n2 - 1}`)} – jest ich ${M(`${n2 - 1} - ${n1 + 1} + 1 = ${count}`)}.`],
-      answer: t`${M(`${count}`)} wyrazów.`, plot: { f, N: Math.min(12, n2 + 2) },
-      verify: () => { let c = 0; for (let n = 1; n <= 300; n++) if (neg ? f(n) < 0 : f(n) > 0) c++; return c === count; } });
-  },
-  function whichTermQuad() {
-    let n0, p, c, other;
-    do { n0 = ri(4, 12); p = ri(-6, 6); c = ri(-10, 10); other = -p - n0; } while (other >= 1);
-    const V = n0 * n0 + p * n0 + c, qs = quadSteps(1, p, c - V, 'n');
-    return mk({ skill: 'który to wyraz?',
-      text: t`Ciąg ${M('(a_n)')} jest określony wzorem ${M(`a_n = ${poly([1, p, c])}`)} dla ${M(t`n \geq 1`)}. Który wyraz tego ciągu jest równy ${M(`${V}`)}?`,
-      fields: [F(M('n ='), n0)],
-      hints: [t`Rozwiąż równanie kwadratowe ${M(`${poly([1, p, c])} = ${V}`)}.`, t`Odrzuć rozwiązanie, które nie jest liczbą naturalną dodatnią.`],
-      steps: [M(t`${poly([1, p, c])} = ${V} \;\Rightarrow\; ${poly([1, p, c - V])} = 0`), M(qs.tex), t`${M('n')} musi być liczbą naturalną dodatnią, więc ${M(`n = ${n0}`)}.`],
-      answer: t`To wyraz ${M(`a_{${n0}}`)}.`, plot: { f: n => n * n + p * n + c, hi: n0 },
-      verify: () => { const hits = []; for (let n = 1; n <= 500; n++) if (n * n + p * n + c === V) hits.push(n); return hits.length === 1 && hits[0] === n0; } });
-  },
-  function rumour() {
-    const a1 = pick([0.1, 0.2, 0.4, 0.5]), g = n => { let x = a1; for (let i = 1; i < n; i++) x = x + 0.5 * x * (1 - x); return x; };
-    const a2 = g(2), a3 = g(3), a3r = Math.round(a3 * 1000) / 1000;
-    return mk({ skill: 'model rozchodzenia się plotki',
-      text: t`Ułamek mieszkańców osiedla, którzy słyszeli plotkę po ${M('n')} dniach, opisuje ciąg: ${M(`a_1 = ${D(a1)}`)}, ${M(t`a_{n+1} = a_n + \frac{1}{2}a_n(1 - a_n)`)}. Oblicz ${M('a_3')}. Wynik zaokrąglij do części tysięcznych.`,
-      fields: [F(M('a_3 \\approx'), a3r, { tol: 0.0011 })], help: 'Liczbę dziesiętną wpisz z przecinkiem, np. 0,381.',
-      hints: [t`Najpierw policz ${M('a_2')} – wstaw ${M(`a_1 = ${D(a1)}`)} do wzoru. Potem w ten sam sposób ${M('a_3')}.`],
-      steps: [M(t`a_2 = ${D(a1)} + \frac{1}{2}\cdot ${D(a1)}\cdot(1 - ${D(a1)}) = ${D(a2)}`),
-        M(t`a_3 = ${D(a2)} + \frac{1}{2}\cdot ${D(a2)}\cdot(1 - ${D(a2)}) = ${D(a3)} \approx ${D(a3r, 3)}`),
-        t`Po trzech dniach plotkę słyszało około ${M(`${D(Math.round(a3 * 1000) / 10, 1)}\\%`)} mieszkańców.`],
-      answer: M(t`a_3 \approx ${D(a3r, 3)}`), plot: { f: g, hi: 3 } });
-  }
-],
-3: [
-  function minTerm() {
-    const k = ri(5, 15), c = ri(-10, 20), f = n => n * n - k * n + c;
-    const nmin = Math.floor(k / 2), vmin = f(nmin), even = k % 2 === 0;
-    return mk({ skill: 'najmniejszy wyraz',
-      text: t`Ciąg ${M('(a_n)')} jest określony wzorem ${M(`a_n = ${poly([1, -k, c])}`)} dla ${M(t`n \geq 1`)}. Oblicz najmniejszy wyraz tego ciągu.`,
-      fields: [F('najmniejszy wyraz:', vmin)],
-      hints: [t`Wyrazy ciągu leżą na paraboli ${M(`y = ${poly([1, -k, c], 'x')}`)}. Gdzie jest jej wierzchołek?`, t`Numer wyrazu musi być liczbą naturalną. Gdy ${M('x_w')} nie jest całkowite, sprawdź dwie najbliższe liczby naturalne.`],
-      steps: [M(t`x_w = \frac{${k}}{2} = ${T(k / 2)}`),
-        even ? t`${M(`x_w = ${k / 2}`)} jest liczbą naturalną, więc najmniejszy jest wyraz ${M(`a_{${nmin}} = ${vmin}`)}.`
-          : t`${M(`x_w`)} nie jest liczbą całkowitą. Sprawdzamy sąsiednie wyrazy: ${M(`a_{${nmin}} = ${f(nmin)}`)}, ${M(`a_{${nmin + 1}} = ${f(nmin + 1)}`)} – są równe, oba są najmniejsze.`],
-      answer: t`Najmniejszy wyraz to ${M(`${vmin}`)}.`, plot: { f, N: Math.min(12, k + 1), hi: nmin },
-      verify: () => { let m = Infinity; for (let n = 1; n <= 500; n++) m = Math.min(m, f(n)); return m === vmin; } });
-  },
-  function arithGeoIdx() {
-    const cfg = pick([[2, 4, 1], [3, 9, 1], [2, 5, 2], [2, 6, 3], [3, 11, 1.5]]), k = cfg[0], m = cfg[1];
-    const a1 = cfg[2] === 1.5 ? 2 * ri(1, 4) : ri(1, 6), r = a1 * cfg[2], n = ri(10, 20), S = n * a1 + n * (n - 1) * r / 2;
-    const ak = a1 + (k - 1) * r, am = a1 + (m - 1) * r;
-    return mk({ skill: 'arytmetyczny i geometryczny',
-      text: t`Ciąg arytmetyczny ${M('(a_n)')} ma pierwszy wyraz ${M(`a_1 = ${a1}`)} i różnicę ${M(t`r \neq 0`)}. Wyrazy ${M('a_1')}, ${M(`a_{${k}}`)}, ${M(`a_{${m}}`)} w podanej kolejności tworzą ciąg geometryczny. Wyznacz ${M('r')} i oblicz sumę ${M(`${n}`)} początkowych wyrazów ciągu ${M('(a_n)')}.`,
-      fields: [F(M('r ='), r), F(M(`S_{${n}} =`), S)],
-      hints: [t`Zapisz ${M(`a_{${k}} = ${a1} + ${k - 1 === 1 ? '' : k - 1}r`)} i ${M(`a_{${m}} = ${a1} + ${m - 1}r`)}.`, t`Warunek ciągu geometrycznego: ${M(`a_{${k}}^2 = a_1\\cdot a_{${m}}`)}. Pamiętaj, że ${M(t`r \neq 0`)} – możesz przez nie podzielić.`],
-      steps: [M(t`(${a1} + ${k - 1 === 1 ? '' : k - 1}r)^2 = ${a1}\cdot(${a1} + ${m - 1}r)`),
-        M(t`${poly([(k - 1) ** 2, 2 * a1 * (k - 1), a1 * a1], 'r')} = ${poly([a1 * (m - 1), a1 * a1], 'r')} \;\Rightarrow\; ${poly([(k - 1) ** 2, 2 * a1 * (k - 1) - a1 * (m - 1), 0], 'r')} = 0`),
-        M(t`r\,(${poly([(k - 1) ** 2, 2 * a1 * (k - 1) - a1 * (m - 1)], 'r')}) = 0 \;\Rightarrow\; r = 0\ \text{(odrzucamy)}\ \text{lub}\ r = ${T(r)}`),
-        t`Sprawdzenie: ${M(`${a1},\\ ${ak},\\ ${am}`)} – iloraz ${M(T(ak / a1))}.`,
-        M(t`S_{${n}} = \frac{2\cdot ${a1} + ${n - 1}\cdot ${T(r)}}{2}\cdot ${n} = ${T(S)}`)],
-      answer: M(`r = ${T(r)},\\quad S_{${n}} = ${T(S)}`), plot: { f: q => a1 + (q - 1) * r },
-      verify: () => r !== 0 && near(ak * ak, a1 * am) && Number.isInteger(S) && Number.isInteger(r) });
-  },
-  function snToAn() {
-    const kind = ri(0, 1), k = ri(4, 6);
-    if (kind === 0) {
-      const b = pick([2, 3]), c = pick([1, 2, 3]), Sn = n => c * (pw(b, n) - 1), a1 = Sn(1), ak = Sn(k) - Sn(k - 1);
-      return mk({ skill: 'aₙ z sumy Sₙ',
-        text: t`Suma ${M('n')} początkowych wyrazów ciągu ${M('(a_n)')} jest dana wzorem ${M(`S_n = ${c === 1 ? '' : c}${c === 1 ? '' : '('}${b}^n - 1${c === 1 ? '' : ')'}`)}. Oblicz ${M('a_1')} i ${M(`a_{${k}}`)}.`,
-        fields: [F(M('a_1 ='), a1), F(M(`a_{${k}} =`), ak)],
-        hints: [t`${M('a_1 = S_1')}, a ${M(`a_{${k}} = S_{${k}} - S_{${k - 1}}`)}.`],
-        steps: [M(t`a_1 = S_1 = ${a1}`), M(t`a_{${k}} = S_{${k}} - S_{${k - 1}} = ${Sn(k)} - ${Sn(k - 1)} = ${ak}`),
-          t`Ten ciąg jest geometryczny: ${M(`a_n = ${c * (b - 1) === 1 ? '' : c * (b - 1) + '\\cdot '}${b}^{n-1}`)}.`],
-        answer: M(`a_1 = ${a1},\\quad a_{${k}} = ${ak}`), plot: { f: n => Sn(n) - Sn(n - 1), hi: k },
-        verify: () => ak === c * (b - 1) * pw(b, k - 1) });
-    }
-    const p = ri(-4, 5), c = nz(-6, 6), Sn = n => n * n + p * n + c, a1 = Sn(1), ak = Sn(k) - Sn(k - 1);
-    return mk({ skill: 'aₙ z sumy Sₙ',
-      text: t`Suma ${M('n')} początkowych wyrazów ciągu ${M('(a_n)')} jest dana wzorem ${M(`S_n = ${poly([1, p, c])}`)}. Oblicz ${M('a_1')} i ${M(`a_{${k}}`)}. Czy ten ciąg jest arytmetyczny?`,
-      fields: [F(M('a_1 ='), a1), F(M(`a_{${k}} =`), ak)],
-      hints: [t`${M('a_1 = S_1')}, a dla ${M(t`n \geq 2`)}: ${M('a_n = S_n - S_{n-1}')}.`, t`Wzór ${M('a_n = S_n - S_{n-1}')} nie działa dla ${M('n = 1')} – sprawdź, czy daje to samo co ${M('S_1')}.`],
-      steps: [M(t`a_1 = S_1 = 1 ${p < 0 ? '-' : '+'} ${Math.abs(p)} ${c < 0 ? '-' : '+'} ${Math.abs(c)} = ${a1}`),
-        t`Dla ${M(t`n \geq 2`)}: ${M(`a_n = S_n - S_{n-1} = ${poly([2, p - 1])}`)}, więc ${M(`a_{${k}} = ${ak}`)}.`,
-        t`Wzór ${M(poly([2, p - 1]))} dla ${M('n=1')} dałby ${M(`${p + 1}`)}, a ${M(`a_1 = ${a1}`)}. Ciąg ${M(`${a1},\\ ${Sn(2) - Sn(1)},\\ ${Sn(3) - Sn(2)},\\ldots`)} nie jest arytmetyczny (arytmetyczny jest dopiero od drugiego wyrazu).`],
-      answer: M(`a_1 = ${a1},\\quad a_{${k}} = ${ak}`), plot: { f: n => Sn(n) - Sn(n - 1), hi: k },
-      verify: () => a1 !== p + 1 && ak === 2 * k + p - 1 });
-  },
-  function fibUnknown() {
-    const a1 = ri(1, 6), a2 = ri(1, 9), a5 = 2 * a1 + 3 * a2;
-    return mk({ skill: 'rekurencja z niewiadomą',
-      text: t`Ciąg ${M('(a_n)')} spełnia warunek ${M('a_{n+2} = a_{n+1} + a_n')} dla ${M(t`n \geq 1`)}. Wiadomo, że ${M(`a_1 = ${a1}`)} oraz ${M(`a_5 = ${a5}`)}. Oblicz ${M('a_2')} i ${M('a_6')}.`,
-      fields: [F(M('a_2 ='), a2), F(M('a_6 ='), 3 * a1 + 5 * a2)],
-      hints: [t`Oznacz ${M('a_2 = x')} i wyraź ${M('a_3, a_4, a_5')} przez ${M('x')}.`],
-      steps: [M(t`a_3 = ${a1} + x,\quad a_4 = x + (${a1} + x) = ${poly([2, a1], 'x')},\quad a_5 = (${a1} + x) + (${poly([2, a1], 'x')}) = ${poly([3, 2 * a1], 'x')}`),
-        M(t`${poly([3, 2 * a1], 'x')} = ${a5} \;\Rightarrow\; 3x = ${a5 - 2 * a1} \;\Rightarrow\; x = ${a2}`),
-        M(t`a_4 = ${2 * a2 + a1},\quad a_6 = a_5 + a_4 = ${a5} + ${2 * a2 + a1} = ${3 * a1 + 5 * a2}`)],
-      answer: M(`a_2 = ${a2},\\quad a_6 = ${3 * a1 + 5 * a2}`), plot: { f: n => { const s = [a1, a2]; for (let i = 2; i < n; i++) s.push(s[i - 1] + s[i - 2]); return s[n - 1]; }, N: 8, hi: 2 },
-      verify: () => { const s = [a1, a2]; for (let i = 2; i < 6; i++) s.push(s[i - 1] + s[i - 2]); return s[4] === a5 && s[5] === 3 * a1 + 5 * a2; } });
-  }
-]
-};
-
-const BANK = { A: GA, G: GG, R: GR };
-const TOPIC_NAME = { A: 'Ciąg arytmetyczny', G: 'Ciąg geometryczny', R: 'Inne ciągi' };
-const LEVEL_NAME = { 1: 'Łatwy', 2: 'Średni', 3: 'Trudny' };
-
-function generate(topic, level, avoid) {
-  const tp = topic === 'X' ? pick(['A', 'G', 'R']) : topic;
-  const list = BANK[tp][level];
-  let i, tries = 0;
-  do { i = Math.floor(Math.random() * list.length); tries++; } while (list.length > 1 && `${tp}${level}${i}` === avoid && tries < 10);
-  const task = list[i]();
-  task.topic = tp; task.level = level; task.key = `${tp}${level}${i}`;
-  return task;
-}
-
-/* ---- odczyt odpowiedzi ---- */
-function parseNum(raw) {
-  let s = String(raw).trim().replace(/[−–]/g, '-').replace(/\s+/g, '').replace(',', '.');
-  if (!s) return NaN;
-  const m = s.match(/^(-?\d+(?:\.\d+)?)\/(-?\d+(?:\.\d+)?)$/);
-  if (m) { const b = +m[2]; return b === 0 ? NaN : +m[1] / b; }
-  if (/^-?(\d+(\.\d+)?|\.\d+)$/.test(s)) return +s;
-  return NaN;
-}
-function checkField(field, raw) {
-  if (!String(raw).trim()) return 'empty';
-  const tol = field.tol || 1e-9;
-  const eq = (a, b) => Math.abs(a - b) <= tol * Math.max(1, Math.abs(b));
-  if (field.set) {
-    const parts = String(raw).split(/;|\s+lub\s+|\s+i\s+/i).map(s => s.trim()).filter(Boolean).map(parseNum);
-    if (parts.some(Number.isNaN)) return 'invalid';
-    const uniq = parts.filter((x, i) => parts.findIndex(y => eq(x, y)) === i);
-    const ok = uniq.length === field.ans.length && field.ans.every(a => uniq.some(u => eq(u, a)));
-    return ok ? 'ok' : 'bad';
-  }
-  const v = parseNum(raw);
-  if (Number.isNaN(v)) return 'invalid';
-  return eq(v, field.ans) ? 'ok' : 'bad';
-}
-
-if (typeof module !== 'undefined') module.exports = { BANK, generate, checkField, parseNum, txt, T };
-</script>
-
-<script>
-/* ====== Interfejs ====== */
-(function () {
-  const $ = id => document.getElementById(id);
-  const STORE = 'ciagi-matura-v1';
-  const state = { topic: 'A', level: 1, task: null, checked: false, counted: false, wrongs: 0, hintsShown: 0, choice: null, lastKey: null };
-  let stats = { cells: {}, streak: 0 };
-  try { const s = JSON.parse(localStorage.getItem(STORE) || 'null'); if (s && s.cells) stats = s; if (s && s.topic) state.topic = s.topic; if (s && s.level) state.level = s.level; } catch (e) {}
-  function save() { try { localStorage.setItem(STORE, JSON.stringify(Object.assign({}, stats, { topic: state.topic, level: state.level }))); } catch (e) {} }
-
-  function typeset(el) {
-    const mj = window.MathJax;
-    if (mj && mj.typesetPromise) return mj.typesetPromise([el]).catch(() => {});
-  }
-  function setMath(el, html) {
-    const mj = window.MathJax;
-    if (mj && mj.typesetClear) { try { mj.typesetClear([el]); } catch (e) {} }
-    el.innerHTML = html; typeset(el);
-  }
-  window.__typesetAll = () => typeset(document.body);
-
-  /* ---------- wykres ---------- */
-  function plotSVG(spec) {
-    const hi = spec.hi;
-    let N = spec.N || (hi && hi <= 12 ? Math.max(hi, 7) : 10);
-    const vals = [];
-    for (let n = 1; n <= N; n++) vals.push(spec.f(n));
-    if (vals.some(v => !Number.isFinite(v))) return '';
-    const W = spec.W || 640, H = spec.W && spec.W < 480 ? 220 : 250, L = 20, R = 20, TOP = 26, B = 40;
-    let mn = Math.min(0, ...vals), mx = Math.max(0, ...vals); if (mn === mx) mx = mn + 1;
-    const span = mx - mn; mx += span * 0.06; if (mn < 0) mn -= span * 0.1;
-    const x = n => L + (n - 0.5) * (W - L - R) / N;
-    const y = v => TOP + (mx - v) * (H - TOP - B) / (mx - mn);
-    const short = v => { const r = Math.abs(v) >= 100 ? Math.round(v) : +v.toFixed(3); return txt(r); };
-    let s = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Wykres ${N} początkowych wyrazów ciągu">`;
-    s += `<line class="axis" x1="${L}" x2="${W - R}" y1="${y(0)}" y2="${y(0)}"/>`;
-    s += `<text class="zl" x="${W - R}" y="${y(0) - 5}" text-anchor="end">0</text>`;
-    vals.forEach((v, i) => {
-      const n = i + 1, cx = x(n), cy = y(v), isHi = n === hi;
-      s += `<line class="guide" x1="${cx}" x2="${cx}" y1="${y(0)}" y2="${cy}"/>`;
-      if (isHi) s += `<circle class="ring" cx="${cx}" cy="${cy}" r="9"/>`;
-      s += `<circle class="pt${isHi ? ' hi' : ''}" cx="${cx}" cy="${cy}" r="5"/>`;
-      const above = v >= 0;
-      s += `<text class="vl" x="${cx}" y="${above ? cy - 10 : cy + 19}" text-anchor="middle">${short(v)}</text>`;
-      s += `<text class="xl" x="${cx}" y="${H - 12}" text-anchor="middle">a${sub(n)}</text>`;
-    });
-    return s + '</svg>';
-  }
-  const SUBS = '₀₁₂₃₄₅₆₇₈₉';
-  const sub = n => String(n).split('').map(d => SUBS[+d]).join('');
-
-  /* ---------- ściąga ---------- */
-  const FORM = {
-    A: [['n-ty wyraz', String.raw`\(a_n = a_1 + (n-1)\,r\)`], ['różnica', String.raw`\(r = a_{n+1} - a_n\)`],
-        ['suma n wyrazów', String.raw`\(S_n = \dfrac{a_1 + a_n}{2}\cdot n\)<br>\(S_n = \dfrac{2a_1 + (n-1)r}{2}\cdot n\)`], ['trzy kolejne wyrazy a, b, c', String.raw`\(2b = a + c\)`]],
-    G: [['n-ty wyraz', String.raw`\(a_n = a_1\cdot q^{\,n-1}\)`], ['iloraz', String.raw`\(q = \dfrac{a_{n+1}}{a_n}\)`],
-        ['suma n wyrazów (q ≠ 1)', String.raw`\(S_n = a_1\cdot\dfrac{1 - q^n}{1 - q}\)`], ['trzy kolejne wyrazy a, b, c', String.raw`\(b^2 = a\cdot c\)`]],
-    R: [['wyraz ze wzoru', String.raw`wstaw numer \(n\) do wzoru \(a_n\)`], ['monotoniczność', String.raw`\(a_{n+1} - a_n > 0\) – rosnący, \(< 0\) – malejący`],
-        ['wyraz z sumy', String.raw`\(a_1 = S_1,\quad a_n = S_n - S_{n-1}\ (n \geq 2)\)`], ['rekurencja', String.raw`licz po kolei: \(a_1, a_2, a_3, \ldots\)`]]
-  };
-  function renderFormulas() {
-    const topics = state.topic === 'X' ? ['A', 'G', 'R'] : [state.topic];
-    const html = topics.map(tp => (topics.length > 1 ? `<h4 style="color:var(--accent)">${TOPIC_NAME[tp]}</h4>` : '') +
-      FORM[tp].map(([h, f]) => `<div><h4>${h}</h4><div class="f">${f}</div></div>`).join('')).join('');
-    setMath($('formulas'), html);
-  }
-
-  /* ---------- postęp ---------- */
-  function renderProgress() {
-    let ok = 0, all = 0;
-    let h = '<thead><tr><th></th><th class="c">Łatwy</th><th class="c">Średni</th><th class="c">Trudny</th></tr></thead><tbody>';
-    ['A', 'G', 'R'].forEach(tp => {
-      h += `<tr><td>${{ A: 'Arytmetyczny', G: 'Geometryczny', R: 'Inne' }[tp]}</td>`;
-      [1, 2, 3].forEach(lv => {
-        const c = stats.cells[tp + lv] || { ok: 0, all: 0 }; ok += c.ok; all += c.all;
-        h += c.all ? `<td class="c"><div class="cell">${c.ok}/${c.all}<span class="bar"><i style="width:${Math.round(100 * c.ok / c.all)}%"></i></span></div></td>`
-                   : `<td class="c"><div class="cell none">–</div></td>`;
-      });
-      h += '</tr>';
-    });
-    $('progress').innerHTML = h + '</tbody>';
-    $('t-ok').textContent = ok; $('t-all').textContent = all; $('t-streak').textContent = stats.streak || 0;
-  }
-  function record(firstTryOk) {
-    if (state.counted) return; state.counted = true;
-    const key = state.task.topic + state.task.level, c = stats.cells[key] || (stats.cells[key] = { ok: 0, all: 0 });
-    c.all++; if (firstTryOk) { c.ok++; stats.streak = (stats.streak || 0) + 1; } else stats.streak = 0;
-    save(); renderProgress();
-  }
-
-  /* ---------- zadanie ---------- */
-  function newTask() {
-    const tk = generate(state.topic, state.level, state.lastKey);
-    state.task = tk; state.lastKey = tk.key; state.checked = false; state.counted = false; state.wrongs = 0; state.hintsShown = 0; state.choice = null;
-    const sheet = $('sheet'); sheet.classList.remove('enter'); void sheet.offsetWidth; sheet.classList.add('enter');
-    $('eyebrow').innerHTML = `<span class="chip">${TOPIC_NAME[tk.topic]}</span><span class="chip l${tk.level}">${LEVEL_NAME[tk.level]}</span><span>${tk.skill}</span>`;
-    setMath($('prompt'), tk.text);
-    let a = '';
-    if (tk.choices) {
-      a = `<div class="choices" role="group" aria-label="Wybierz odpowiedź">` + tk.choices.map((c, i) => `<button type="button" class="choice" id="ch${i}" data-i="${i}" aria-pressed="false">${'ABC'[i]}. ${c}</button>`).join('') + '</div>';
-    } else {
-      a = '<div class="fields">' + tk.fields.map((f, i) => `<label class="field${f.set ? ' set' : ''}" id="fw${i}"><span class="flabel">${f.label}</span><input id="f${i}" type="text" inputmode="text" spellcheck="false" aria-label="Odpowiedź ${i + 1}">${f.unit ? `<span class="unit">${f.unit}</span>` : ''}<span class="tick" aria-hidden="true"></span></label>`).join('') + '</div>';
-      a += `<p class="inputhelp" style="margin-top:10px">${tk.help || 'Ułamek wpisz jako 3/4, liczbę dziesiętną z przecinkiem: 4,5.'}</p>`;
-    }
-    setMath($('answer-area'), a);
-    $('feedback').hidden = true; $('hints').innerHTML = ''; $('solution').hidden = true; $('plot').hidden = true;
-    $('btn-hint').disabled = !tk.hints.length; $('btn-hint').textContent = 'Podpowiedź';
-    if (tk.choices) $('answer-area').querySelectorAll('.choice').forEach(b => b.addEventListener('click', () => {
-      state.choice = +b.dataset.i;
-      $('answer-area').querySelectorAll('.choice').forEach(x => { x.setAttribute('aria-pressed', String(x === b)); x.classList.remove('ok', 'bad'); });
-    }));
-    else { const f0 = $('f0'); if (f0 && window.matchMedia('(pointer:fine)').matches) f0.focus({ preventScroll: true }); }
-  }
-
-  function feedback(kind, html) { const fb = $('feedback'); fb.className = 'feedback ' + kind; fb.hidden = false; setMath(fb, html); }
-
-  function check() {
-    const tk = state.task; if (!tk) return;
-    if (tk.choices) {
-      if (state.choice === null) { feedback('info', 'Najpierw wybierz jedną z odpowiedzi.'); return; }
-      const ok = state.choice === tk.ans;
-      const btn = $('ch' + state.choice); btn.classList.add(ok ? 'ok' : 'bad');
-      if (ok) { record(state.wrongs === 0); feedback('ok', 'Dobrze! <span>Zobacz, jak to uzasadnić.</span>'); showSolution(false); }
-      else { state.wrongs++; record(false); feedback('bad', 'To nie ta odpowiedź. <span>Weź podpowiedź albo spróbuj jeszcze raz.</span>'); }
-      return;
-    }
-    const res = tk.fields.map((f, i) => checkField(f, $('f' + i).value));
-    if (res.every(r => r === 'empty')) { feedback('info', 'Wpisz odpowiedź w puste pole.'); return; }
-    if (res.includes('invalid')) {
-      res.forEach((r, i) => { $('fw' + i).classList.toggle('bad', r === 'invalid'); $('fw' + i).classList.remove('ok'); $('fw' + i).querySelector('.tick').textContent = r === 'invalid' ? '?' : ''; });
-      feedback('info', 'Nie rozumiem zapisu w zaznaczonym polu. <span>Wpisz liczbę, np. −12, 4,5 albo 3/4.</span>'); return;
-    }
-    res.forEach((r, i) => { const w = $('fw' + i); w.classList.toggle('ok', r === 'ok'); w.classList.toggle('bad', r === 'bad' || r === 'empty'); w.querySelector('.tick').textContent = r === 'ok' ? '✓' : '✗'; });
-    const allOk = res.every(r => r === 'ok');
-    if (allOk) {
-      record(state.wrongs === 0);
-      feedback('ok', (state.wrongs === 0 ? 'Dobrze, za pierwszym razem!' : 'Dobrze!') + ' <span>Porównaj swój sposób z rozwiązaniem.</span>');
-      showSolution(false);
-    } else {
-      state.wrongs++; record(false);
-      const nOk = res.filter(r => r === 'ok').length;
-      const more = state.wrongs >= 2 ? ' Możesz też zobaczyć pełne rozwiązanie.' : (tk.hints.length > state.hintsShown ? ' Spróbuj z podpowiedzią.' : '');
-      feedback('bad', (nOk ? `Częściowo: ${nOk} z ${res.length} dobrze.` : 'Jeszcze nie.') + ` <span>Popraw pola oznaczone ✗.${more}</span>`);
-    }
-  }
-
-  function hint() {
-    const tk = state.task; if (!tk || state.hintsShown >= tk.hints.length) return;
-    const i = state.hintsShown++;
-    const d = document.createElement('div'); d.className = 'hint';
-    $('hints').appendChild(d); setMath(d, `<b>Podpowiedź ${i + 1}${tk.hints.length > 1 ? '/' + tk.hints.length : ''}</b>${tk.hints[i]}`);
-    $('btn-hint').disabled = state.hintsShown >= tk.hints.length;
-    if (state.hintsShown < tk.hints.length) $('btn-hint').textContent = 'Kolejna podpowiedź';
-  }
-
-  function showSolution(manual) {
-    const tk = state.task; if (!tk) return;
-    if (manual) { record(false); if ($('feedback').hidden || !$('feedback').classList.contains('ok')) feedback('info', 'Przeczytaj rozwiązanie, a potem spróbuj podobnego zadania.'); }
-    setMath($('steps'), tk.steps.map(s => `<li>${s}</li>`).join(''));
-    setMath($('final'), `<span class="lab">Odpowiedź:</span>${tk.answer}`);
-    if (tk.plot) {
-      $('solution').hidden = false; $('plot').hidden = false; $('plot').innerHTML = '';
-      const avail = Math.max(300, Math.min(640, $('plot').clientWidth - 24));
-      const svg = plotSVG(Object.assign({}, tk.plot, { W: avail }));
-      if (svg) $('plot').innerHTML = `<p class="cap">Początkowe wyrazy ciągu${tk.plot.hi ? ' (zielony – wyraz z zadania)' : ''}</p>` + svg; else $('plot').hidden = true;
-    }
-    $('solution').hidden = false;
-    if (manual) $('solution').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }
-
-  /* ---------- przełączniki ---------- */
-  function syncControls() {
-    document.querySelectorAll('#topic-seg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.topic === state.topic)));
-    document.querySelectorAll('#level-seg button').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.level === state.level)));
-  }
-  document.querySelectorAll('#topic-seg button').forEach(b => b.addEventListener('click', () => { state.topic = b.dataset.topic; save(); syncControls(); renderFormulas(); newTask(); }));
-  document.querySelectorAll('#level-seg button').forEach(b => b.addEventListener('click', () => { state.level = +b.dataset.level; save(); syncControls(); newTask(); }));
-  $('answer-form').addEventListener('submit', e => { e.preventDefault(); check(); });
-  $('btn-hint').addEventListener('click', hint);
-  $('btn-solve').addEventListener('click', () => showSolution(true));
-  $('btn-next').addEventListener('click', newTask);
-
-  function resetUI() {
-    const area = $('reset-area');
-    area.innerHTML = '<span>Na pewno wyzerować cały postęp?</span><button type="button" class="linkbtn danger" id="r-yes">Tak, wyzeruj</button><button type="button" class="linkbtn" id="r-no">Anuluj</button>';
-    $('r-yes').onclick = () => { stats = { cells: {}, streak: 0 }; save(); renderProgress(); restore(); };
-    $('r-no').onclick = restore;
-    function restore() { area.innerHTML = '<button type="button" class="linkbtn" id="btn-reset">Wyzeruj postęp</button>'; $('btn-reset').onclick = resetUI; }
-  }
-  $('btn-reset').onclick = resetUI;
-
-  syncControls(); renderFormulas(); renderProgress(); newTask();
-})();
-</script>
-
 </body>
 </html>
