@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Aplikacje pomocne w nauce do matury z matematyki: ciągi i planimetria na poziomie podstawowym.">
+<meta name="description" content="Matematyka na maturę podstawową: wszystkie działy z wymagań CKE, losowane zadania na trzech poziomach, podpowiedzi i rozwiązania krok po kroku.">
 <title>Matematyka na maturę</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=JetBrains+Mono:wght@500&display=swap">
 <style>
-/* Spis aplikacji w tym samym zeszycie w kratkę co aplikacje */
+/* Spis działów w tym samym zeszycie w kratkę co aplikacje */
 :root{
   color-scheme:light;
   --paper:#f5f7fb; --surface:#ffffff; --ink:#1a2132; --muted:#5b6579; --line:#d8dee9; --grid:#e5eaf3;
@@ -31,91 +31,147 @@
 *{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;
   padding:max(28px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) 48px max(16px, env(safe-area-inset-left, 0px))}
-.wrap{max-width:960px;margin:0 auto;display:grid;gap:28px}
+.wrap{max-width:1040px;margin:0 auto;display:grid;gap:26px}
 header h1{font-family:var(--f-display);font-weight:800;font-size:clamp(2rem,5vw,3rem);line-height:1.02;margin:0;letter-spacing:-.015em}
-header p{margin:8px 0 0;color:var(--muted);max-width:58ch;font-size:1.05rem}
-.apps{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,400px),1fr));gap:18px}
-.card{position:relative;display:grid;grid-template-rows:auto 1fr;text-decoration:none;color:inherit;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface);
+header p{margin:8px 0 0;color:var(--muted);max-width:62ch;font-size:1.05rem}
+.facts{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:14px;font-family:var(--f-mono);font-size:.84rem;color:var(--muted)}
+.facts b{color:var(--ink)}
+.how{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:0;padding:0;list-style:none;counter-reset:how}
+.how li{counter-increment:how;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px 10px 44px;position:relative;font-size:.93rem}
+.how li::before{content:counter(how);position:absolute;left:12px;top:10px;width:22px;height:22px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font:700 .8rem/22px var(--f-mono);text-align:center}
+section.area{display:grid;gap:12px}
+.area h2{font-family:var(--f-display);font-weight:800;font-size:1.25rem;margin:0;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.area h2 small{font-family:var(--f-mono);font-weight:500;font-size:.72rem;color:var(--muted);letter-spacing:.04em}
+.apps{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:14px}
+.card{position:relative;display:grid;gap:8px;align-content:start;text-decoration:none;color:inherit;border:1px solid var(--line);border-radius:12px;padding:16px 18px 14px 34px;
+  background-color:var(--surface);background-image:linear-gradient(var(--grid) 1px, transparent 1px),linear-gradient(90deg, var(--grid) 1px, transparent 1px);background-size:22px 22px;background-position:-1px -1px;
   transition:border-color .15s, transform .15s, box-shadow .15s}
-.card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 24px -14px rgba(31,69,196,.45)}
-.card:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
-.art{position:relative;height:150px;background-color:var(--surface);
-  background-image:linear-gradient(var(--grid) 1px, transparent 1px),linear-gradient(90deg, var(--grid) 1px, transparent 1px);background-size:22px 22px;background-position:-1px -1px;border-bottom:1px solid var(--line)}
-.art::before{content:"";position:absolute;left:26px;top:0;bottom:0;width:2px;background:var(--margin)}
-.art svg{position:absolute;inset:0;width:100%;height:100%}
-.art .s{stroke:var(--ink);stroke-width:2;fill:none;stroke-linejoin:round}
-.art .f{fill:var(--accent-soft)}
-.art .a{stroke:var(--accent);stroke-width:2.4;fill:none}
-.art .d{fill:var(--accent)}
-.art .g{stroke:var(--muted);stroke-width:1.2;stroke-dasharray:3 4}
-.art text{font:700 13px var(--f-display);fill:var(--ink)}
-.body{padding:18px 20px 20px;display:grid;gap:10px;align-content:start}
-.body h2{font-family:var(--f-display);font-weight:800;font-size:1.6rem;line-height:1.1;margin:0}
-.body h2 small{font-family:var(--f-mono);font-weight:500;font-size:.62em;color:var(--accent);margin-left:.45em;white-space:nowrap}
-.body p{margin:0;color:var(--muted)}
-.chips{display:flex;flex-wrap:wrap;gap:6px}
-.chip{font-size:.75rem;font-weight:700;letter-spacing:.04em;padding:3px 9px;border-radius:999px;background:var(--accent-soft);color:var(--accent)}
-.foot{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px 16px;margin-top:4px;padding-top:12px;border-top:1px dashed var(--line)}
-.prog{font-family:var(--f-mono);font-size:.82rem;color:var(--muted)}
+.card::before{content:"";position:absolute;left:20px;top:0;bottom:0;width:2px;background:var(--margin)}
+a.card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 24px -14px rgba(31,69,196,.45)}
+a.card:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.card h3{font-family:var(--f-display);font-weight:800;font-size:1.3rem;line-height:1.1;margin:0}
+.card .tag{font-family:var(--f-mono);font-size:.8rem;color:var(--accent)}
+.card p{margin:0;color:var(--muted);font-size:.93rem}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{font-size:.72rem;font-weight:700;letter-spacing:.03em;padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent)}
+.foot{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:6px 14px;margin-top:2px;padding-top:10px;border-top:1px dashed var(--line)}
+.prog{font-family:var(--f-mono);font-size:.78rem;color:var(--muted)}
 .prog b{color:var(--ok)}
 .go{font-weight:700;color:var(--accent)}
-footer{color:var(--muted);font-size:.85rem}
-footer a{color:var(--accent)}
+.card.soon{background-image:none;border-style:dashed;opacity:.8}
+.card.soon::before{display:none}
+.card.soon{padding-left:18px}
+.card.soon .go{color:var(--muted);font-weight:400;font-size:.85rem}
+footer{color:var(--muted);font-size:.85rem;display:grid;gap:4px}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
     <h1>Matematyka na maturę</h1>
-    <p>Aplikacje do nauki na maturę podstawową. Losowane zadania na trzech poziomach, podpowiedzi i rozwiązania krok po kroku.</p>
+    <p>Wszystkie działy matury podstawowej w jednym miejscu. Zadania są wzorowane na typach zadań z arkuszy CKE i losowane z nowymi liczbami, więc nigdy się nie kończą.</p>
+    <div class="facts"><span><b>Formuła 2023</b></span><span><b>180</b> minut</span><span><b>50</b> punktów</span><span>zdajesz od <b>30%</b> (15 pkt)</span></div>
   </header>
 
-  <main class="apps">
-    <a class="card" href="ciagi.html" data-store="ciagi-matura-v1">
-      <div class="art" aria-hidden="true">
-        <svg viewBox="0 0 400 150" preserveAspectRatio="xMidYMid meet">
-          <line class="g" x1="60" y1="120" x2="360" y2="120" style="stroke-dasharray:none"/>
-          <line class="g" x1="90" y1="120" x2="90" y2="104"/><line class="g" x1="135" y1="120" x2="135" y2="92"/><line class="g" x1="180" y1="120" x2="180" y2="80"/>
-          <line class="g" x1="225" y1="120" x2="225" y2="68"/><line class="g" x1="270" y1="120" x2="270" y2="56"/><line class="g" x1="315" y1="120" x2="315" y2="44"/>
-          <polyline class="a" points="90,104 135,92 180,80 225,68 270,56 315,44" style="stroke-dasharray:5 6;stroke-width:1.6"/>
-          <circle class="d" cx="90" cy="104" r="6"/><circle class="d" cx="135" cy="92" r="6"/><circle class="d" cx="180" cy="80" r="6"/>
-          <circle class="d" cx="225" cy="68" r="6"/><circle class="d" cx="270" cy="56" r="6"/><circle class="d" cx="315" cy="44" r="6"/>
-          <text x="82" y="140">a₁</text><text x="127" y="140">a₂</text><text x="172" y="140">a₃</text><text x="217" y="140">a₄</text>
-        </svg>
+  <ol class="how" aria-label="Jak to działa">
+    <li>Wybierz dział, temat i poziom: łatwy, średni albo trudny.</li>
+    <li>Rozwiąż zadanie i od razu sprawdź wynik.</li>
+    <li>Utknąłeś? Masz dwie podpowiedzi, a potem rozwiązanie krok po kroku.</li>
+  </ol>
+
+  <section class="area">
+    <h2>Liczby i algebra <small>wymagania I–IV</small></h2>
+    <div class="apps">
+      <a class="card" href="liczby.html" data-store="liczby-matura-v1">
+        <h3>Liczby rzeczywiste</h3><span class="tag">aⁿ · √ · log · %</span>
+        <p>Potęgi, pierwiastki, logarytmy, procenty i wartość bezwzględna.</p>
+        <div class="chips"><span class="chip">potęgi</span><span class="chip">logarytmy</span><span class="chip">procenty</span><span class="chip">|x|</span></div>
+        <div class="foot"><span class="prog">Jeszcze nic nie rozwiązano</span><span class="go">Otwórz →</span></div>
+      </a>
+      <a class="card" href="rownania.html" data-store="rownania-matura-v1">
+        <h3>Równania i nierówności</h3><span class="tag">Δ = b² − 4ac</span>
+        <p>Liniowe, układy równań, kwadratowe, wielomianowe i wymierne.</p>
+        <div class="chips"><span class="chip">liniowe</span><span class="chip">układy</span><span class="chip">kwadratowe</span><span class="chip">wielomianowe</span></div>
+        <div class="foot"><span class="prog">Jeszcze nic nie rozwiązano</span><span class="go">Otwórz →</span></div>
+      </a>
+      <div class="card soon">
+        <h3>Wyrażenia algebraiczne</h3><span class="tag">(a + b)² = a² + 2ab + b²</span>
+        <p>Wzory skróconego mnożenia, wielomiany, wyrażenia wymierne.</p>
+        <div class="foot"><span class="go">W przygotowaniu</span></div>
       </div>
-      <div class="body">
-        <h2>Ciągi <small>a₁, a₂, a₃, …</small></h2>
-        <p>Ciąg arytmetyczny, geometryczny i inne ciągi: wzory na wyrazy i sumy, zadania z treścią.</p>
+    </div>
+  </section>
+
+  <section class="area">
+    <h2>Funkcje i ciągi <small>wymagania V, VI, XIII</small></h2>
+    <div class="apps">
+      <a class="card" href="funkcje.html" data-store="funkcje-matura-v1">
+        <h3>Funkcje</h3><span class="tag">y = f(x)</span>
+        <p>Czytanie wykresu, funkcja liniowa, kwadratowa i wykładnicza.</p>
+        <div class="chips"><span class="chip">wykres</span><span class="chip">liniowa</span><span class="chip">kwadratowa</span><span class="chip">wykładnicza</span></div>
+        <div class="foot"><span class="prog">Jeszcze nic nie rozwiązano</span><span class="go">Otwórz →</span></div>
+      </a>
+      <a class="card" href="ciagi.html" data-store="ciagi-matura-v1">
+        <h3>Ciągi</h3><span class="tag">a₁, a₂, a₃, …</span>
+        <p>Ciąg arytmetyczny, geometryczny i inne ciągi, zadania z treścią.</p>
         <div class="chips"><span class="chip">arytmetyczny</span><span class="chip">geometryczny</span><span class="chip">inne ciągi</span></div>
         <div class="foot"><span class="prog">Jeszcze nic nie rozwiązano</span><span class="go">Otwórz →</span></div>
+      </a>
+      <div class="card soon">
+        <h3>Optymalizacja</h3><span class="tag">max · min</span>
+        <p>Zadania optymalizacyjne z funkcją kwadratową.</p>
+        <div class="foot"><span class="go">W przygotowaniu</span></div>
       </div>
-    </a>
+    </div>
+  </section>
 
-    <a class="card" href="planimetria.html" data-store="planimetria-matura-v1">
-      <div class="art" aria-hidden="true">
-        <svg viewBox="0 0 400 150" preserveAspectRatio="xMidYMid meet">
-          <circle class="s" cx="200" cy="75" r="58" style="stroke-width:1.6"/>
-          <polygon class="f" points="142,75 258,75 229,25"/>
-          <polygon class="s" points="142,75 258,75 229,25"/>
-          <polyline class="s" points="221,31 216,40 224,45" style="stroke-width:1.4"/>
-          <path class="a" d="M162 75 A20 20 0 0 0 160 66"/>
-          <circle class="d" cx="200" cy="75" r="3.5"/>
-          <polygon class="s" points="300,118 360,118 300,62" style="fill:var(--accent-soft)"/>
-          <polyline class="s" points="300,108 310,108 310,118" style="stroke-width:1.4"/>
-          <text x="128" y="80">A</text><text x="264" y="80">B</text><text x="230" y="18">C</text><text x="194" y="94">S</text>
-          <text x="48" y="60" style="font:500 13px var(--f-mono);fill:var(--accent)">α+β+γ</text><text x="48" y="78" style="font:500 13px var(--f-mono);fill:var(--accent)">= 180°</text>
-        </svg>
-      </div>
-      <div class="body">
-        <h2>Planimetria <small>△ ○ ▱</small></h2>
-        <p>Trójkąty, czworokąty i wielokąty, koło i okrąg, podobieństwo i twierdzenie Talesa — każde zadanie z rysunkiem.</p>
+  <section class="area">
+    <h2>Geometria <small>wymagania VII–X</small></h2>
+    <div class="apps">
+      <a class="card" href="planimetria.html" data-store="planimetria-matura-v1">
+        <h3>Planimetria</h3><span class="tag">α + β + γ = 180°</span>
+        <p>Trójkąty, czworokąty, koło i okrąg, podobieństwo. Każde zadanie z rysunkiem.</p>
         <div class="chips"><span class="chip">trójkąty</span><span class="chip">czworokąty</span><span class="chip">koło i okrąg</span><span class="chip">podobieństwo</span></div>
         <div class="foot"><span class="prog">Jeszcze nic nie rozwiązano</span><span class="go">Otwórz →</span></div>
+      </a>
+      <div class="card soon">
+        <h3>Trygonometria</h3><span class="tag">sin²α + cos²α = 1</span>
+        <p>Funkcje trygonometryczne kątów od 0° do 180°, tożsamości.</p>
+        <div class="foot"><span class="go">W przygotowaniu</span></div>
       </div>
-    </a>
-  </main>
+      <div class="card soon">
+        <h3>Geometria analityczna</h3><span class="tag">y = ax + b</span>
+        <p>Proste, odcinki, okrąg w układzie współrzędnych.</p>
+        <div class="foot"><span class="go">W przygotowaniu</span></div>
+      </div>
+      <div class="card soon">
+        <h3>Stereometria</h3><span class="tag">V = P<sub>p</sub> · H</span>
+        <p>Graniastosłupy, ostrosłupy, bryły obrotowe, kąty w bryłach.</p>
+        <div class="foot"><span class="go">W przygotowaniu</span></div>
+      </div>
+    </div>
+  </section>
 
-  <footer>Postęp zapisuje się tylko w tej przeglądarce, na tym urządzeniu.</footer>
+  <section class="area">
+    <h2>Kombinatoryka, prawdopodobieństwo, statystyka <small>wymagania XI–XII</small></h2>
+    <div class="apps">
+      <div class="card soon">
+        <h3>Kombinatoryka i prawdopodobieństwo</h3><span class="tag">P(A) = |A| : |Ω|</span>
+        <p>Reguła mnożenia i dodawania, klasyczna definicja prawdopodobieństwa.</p>
+        <div class="foot"><span class="go">W przygotowaniu</span></div>
+      </div>
+      <div class="card soon">
+        <h3>Statystyka</h3><span class="tag">x̄ · mediana · σ</span>
+        <p>Średnia, mediana, dominanta, odchylenie standardowe.</p>
+        <div class="foot"><span class="go">W przygotowaniu</span></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Postęp zapisuje się tylko w tej przeglądarce, na tym urządzeniu.</span>
+    <span>Układ działów odpowiada wymaganiom z informatora CKE o egzaminie maturalnym z matematyki na poziomie podstawowym (Formuła 2023).</span>
+  </footer>
 </div>
 <script>
 document.querySelectorAll('.card[data-store]').forEach(function (card) {
@@ -124,7 +180,7 @@ document.querySelectorAll('.card[data-store]').forEach(function (card) {
     if (!s || !s.cells) return;
     var ok = 0, all = 0;
     Object.keys(s.cells).forEach(function (k) { ok += s.cells[k].ok || 0; all += s.cells[k].all || 0; });
-    if (all) card.querySelector('.prog').innerHTML = 'Twoje zadania: ' + all + ' · dobrze za 1. razem: <b>' + ok + '</b>';
+    if (all) card.querySelector('.prog').innerHTML = 'Zadania: ' + all + ' · dobrze za 1. razem: <b>' + ok + '</b>';
   } catch (e) {}
 });
 </script>
