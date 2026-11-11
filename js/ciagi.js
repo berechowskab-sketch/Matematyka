@@ -59,7 +59,7 @@ const GA = {
 1: [
   function nthTerm() {
     const a1 = ri(-9, 15), r = nz(-6, 7), n = ri(7, 25), an = a1 + (n - 1) * r;
-    return mk({ skill: 'n-ty wyraz',
+    return mk({ verify: () => { let x = a1; for (let i = 1; i < n; i++) x += r; return x === an; }, skill: 'n-ty wyraz',
       text: t`W ciągu arytmetycznym ${M('(a_n)')} dane są ${M(`a_1 = ${a1}`)} oraz ${M(`r = ${r}`)}. Oblicz wyraz ${M(`a_{${n}}`)}.`,
       fields: [F(M(`a_{${n}} =`), an)],
       hints: [t`Skorzystaj ze wzoru ${M(t`a_n = a_1 + (n-1)\cdot r`)}.`, t`Różnicę mnożysz przez ${M(`${n}-1=${n - 1}`)}, a nie przez ${M(`${n}`)}.`],
@@ -70,7 +70,7 @@ const GA = {
   function fromTerms() {
     const a1 = ri(-10, 12), r = nz(-5, 6), n = ri(8, 15), an = a1 + (n - 1) * r;
     const first = [0, 1, 2, 3].map(i => a1 + i * r);
-    return mk({ skill: 'różnica i n-ty wyraz',
+    return mk({ verify: () => { const d0 = first[1] - first[0]; let x = first[0]; for (let i = 1; i < n; i++) x += d0; return d0 === r && first[3] - first[2] === r && x === an; }, skill: 'różnica i n-ty wyraz',
       text: t`Początkowe wyrazy ciągu arytmetycznego to ${M(first.join(',\\ ') + t`,\ \ldots`)}. Wyznacz różnicę ${M('r')} tego ciągu i oblicz ${M(`a_{${n}}`)}.`,
       fields: [F(M('r ='), r), F(M(`a_{${n}} =`), an)],
       hints: [t`Różnica to ${M('r = a_2 - a_1')}. Sprawdź ją na kolejnej parze wyrazów.`, t`Potem użyj wzoru ${M(t`a_n = a_1 + (n-1)r`)}.`],
@@ -80,7 +80,7 @@ const GA = {
   },
   function sumEnds() {
     const a1 = ri(-5, 12), r = nz(-3, 5), n = ri(8, 30), an = a1 + (n - 1) * r, S = (a1 + an) * n / 2;
-    return mk({ skill: 'suma wyrazów',
+    return mk({ verify: () => { let x = a1, tot = 0; for (let i = 1; i <= n; i++) { tot += x; if (i < n) x += r; } return tot === S && x === an; }, skill: 'suma wyrazów',
       text: t`Ciąg arytmetyczny ma ${M(`${n}`)} wyrazów. Pierwszy wyraz jest równy ${M(`${a1}`)}, a ostatni ${M(`${an}`)}. Oblicz sumę wszystkich wyrazów tego ciągu.`,
       fields: [F(M(`S_{${n}} =`), S)],
       hints: [t`Gdy znasz pierwszy i ostatni wyraz, użyj wzoru ${M(t`S_n = \frac{a_1 + a_n}{2}\cdot n`)}.`, t`Dodaj pierwszy i ostatni wyraz, podziel przez ${M(2)} i pomnóż przez liczbę wyrazów. Uważaj na znaki przy liczbach ujemnych.`],
@@ -90,13 +90,13 @@ const GA = {
   },
   function middle() {
     const x = ri(-8, 15), d = nz(-9, 9), a = x - d, c = x + d, last = Math.random() < 0.35;
-    if (!last) return mk({ skill: 'warunek 2b = a + c',
+    if (!last) return mk({ verify: () => x - a === c - x, skill: 'warunek 2b = a + c',
       text: t`Liczby ${M(`${a}`)}, ${M('x')}, ${M(`${c}`)} w podanej kolejności tworzą ciąg arytmetyczny. Oblicz ${M('x')}.`,
       fields: [F(M('x ='), x)],
       hints: [t`Środkowy wyraz ciągu arytmetycznego jest średnią arytmetyczną sąsiadów: ${M(t`b = \frac{a + c}{2}`)}.`, t`Dodaj oba skrajne wyrazy i podziel sumę przez ${M(2)}.`],
       steps: [t`Warunek ciągu arytmetycznego: ${M('2b = a + c')}, czyli ${M(`2x = ${a} + ${P(c)}`)}.`, M(t`2x = ${a + c} \;\Rightarrow\; x = ${x}`)],
       answer: M(`x = ${x}`), plot: { f: k => a + (k - 1) * d, hi: 2 } });
-    return mk({ skill: 'warunek 2b = a + c',
+    return mk({ verify: () => c - x === x - a && 2 * x === a + c, skill: 'warunek 2b = a + c',
       text: t`Liczby ${M(`${a}`)}, ${M(`${x}`)}, ${M('y')} w podanej kolejności tworzą ciąg arytmetyczny. Oblicz ${M('y')}.`,
       fields: [F(M('y ='), c)],
       hints: [t`Zapisz warunek ${M('2b = a + c')} i wyznacz z niego ${M('c')}.`, t`Pomnóż środkowy wyraz przez ${M(2)} i odejmij pierwszy wyraz – zostanie ${M('c')}.`],
@@ -107,7 +107,7 @@ const GA = {
 2: [
   function twoTerms() {
     const a1 = ri(-10, 12), r = nz(-6, 6), k = ri(2, 5), m = k + ri(2, 6), ak = a1 + (k - 1) * r, am = a1 + (m - 1) * r;
-    return mk({ skill: 'a₁ i r z dwóch wyrazów',
+    return mk({ verify: () => { const seq = [a1]; for (let i = 1; i < m; i++) seq.push(seq[i - 1] + r); return seq[k - 1] === ak && seq[m - 1] === am; }, skill: 'a₁ i r z dwóch wyrazów',
       text: t`W ciągu arytmetycznym ${M('(a_n)')} dane są ${M(`a_{${k}} = ${ak}`)} oraz ${M(`a_{${m}} = ${am}`)}. Wyznacz pierwszy wyraz ${M('a_1')} i różnicę ${M('r')} tego ciągu.`,
       fields: [F(M('a_1 ='), a1), F(M('r ='), r)],
       hints: [t`Między ${M(`a_{${k}}`)} a ${M(`a_{${m}}`)} jest ${M(`${m - k}`)} „kroków” o długości ${M('r')}: ${M(`a_{${m}} - a_{${k}} = ${m - k}r`)}.`, t`Gdy znasz ${M('r')}, cofnij się od ${M(`a_{${k}}`)}: ${M(`a_1 = a_{${k}} - ${cf(k - 1, 'r')}`)}.`],
@@ -127,7 +127,7 @@ const GA = {
   },
   function sumA1r() {
     const a1 = ri(-15, 15), r = nz(-5, 6), n = ri(10, 30), S = n * a1 + n * (n - 1) * r / 2;
-    return mk({ skill: 'suma n wyrazów',
+    return mk({ verify: () => { let x = a1, tot = 0; for (let i = 1; i <= n; i++) { tot += x; x += r; } return tot === S; }, skill: 'suma n wyrazów',
       text: t`W ciągu arytmetycznym ${M('(a_n)')} dane są ${M(`a_1 = ${a1}`)} i ${M(`r = ${r}`)}. Oblicz sumę ${M(`${n}`)} początkowych wyrazów tego ciągu.`,
       fields: [F(M(`S_{${n}} =`), S)],
       hints: [t`Użyj wzoru ${M(t`S_n = \frac{2a_1 + (n-1)r}{2}\cdot n`)}. Nie musisz liczyć ostatniego wyrazu.`, t`W liczniku jest ${M('2a_1 + (n-1)r')}: różnicę mnożysz przez ${M('n - 1')}, a nie przez ${M('n')}.`],
@@ -151,7 +151,7 @@ const GA = {
   function word() {
     if (Math.random() < 0.5) {
       const f = ri(10, 24), d = ri(1, 4), n = ri(12, 30), an = f + (n - 1) * d, S = (f + an) * n / 2;
-      return mk({ skill: 'zadanie z treścią',
+      return mk({ verify: () => { let x = f, tot = 0, last = f; for (let i = 1; i <= n; i++) { tot += x; last = x; x += d; } return tot === S && last === an; }, skill: 'zadanie z treścią',
         text: t`W amfiteatrze jest ${n} rzędów. W pierwszym rzędzie jest ${f} miejsc, a w każdym następnym o ${d} ${d === 1 ? 'miejsce' : 'miejsca'} więcej niż w poprzednim. Ile miejsc jest w ostatnim rzędzie, a ile w całym amfiteatrze?`,
         fields: [F('ostatni rząd:', an, { unit: 'miejsc' }), F('razem:', S, { unit: 'miejsc' })],
         hints: [t`Liczby miejsc w rzędach tworzą ciąg arytmetyczny: ${M(`a_1 = ${f}`)}, ${M(`r = ${d}`)}, ${M(`n = ${n}`)}.`, t`Ostatni rząd to ${M(`a_{${n}}`)}, wszystkie miejsca to ${M(`S_{${n}}`)}.`],
@@ -160,7 +160,7 @@ const GA = {
         answer: t`Ostatni rząd: ${an} miejsc, razem: ${S} miejsc.`, plot: { f: k => f + (k - 1) * d } });
     }
     const s = ri(5, 30) * 10, d = pick([10, 20, 25, 30, 50]), n = pick([10, 12, 15, 18, 24]), an = s + (n - 1) * d, S = (s + an) * n / 2;
-    return mk({ skill: 'zadanie z treścią',
+    return mk({ verify: () => { let x = s, tot = 0, last = s; for (let i = 1; i <= n; i++) { tot += x; last = x; x += d; } return tot === S && last === an; }, skill: 'zadanie z treścią',
       text: t`Ola oszczędza na wakacje. W pierwszym miesiącu odłożyła ${s} zł, a w każdym następnym miesiącu odkładała o ${d} zł więcej niż w poprzednim. Ile odłożyła w ostatnim, ${n}. miesiącu, a ile łącznie przez ${n} miesięcy?`,
       fields: [F(`${n}. miesiąc:`, an, { unit: 'zł' }), F('łącznie:', S, { unit: 'zł' })],
       hints: [t`Kwoty tworzą ciąg arytmetyczny: ${M(`a_1 = ${s}`)}, ${M(`r = ${d}`)}.`, t`Łączna kwota to ${M(`S_{${n}}`)}.`],
@@ -270,7 +270,7 @@ const GG = {
     if (Math.random() < 0.7) { a1 = pick([1, 2, 3, 4, 5, -1, -2, -3]); q = pick([2, 3, -2, -3]); n = ri(4, Math.abs(q) === 3 ? 6 : 7); }
     else { q = 0.5; n = ri(4, 7); a1 = pw(2, n - 1) * pick([1, 3, 5]); }
     const an = a1 * pw(q, n - 1);
-    return mk({ skill: 'n-ty wyraz',
+    return mk({ verify: () => { let x = a1; for (let i = 1; i < n; i++) x *= q; return near(x, an); }, skill: 'n-ty wyraz',
       text: t`W ciągu geometrycznym ${M('(a_n)')} dane są ${M(`a_1 = ${a1}`)} oraz ${M(`q = ${T(q)}`)}. Oblicz wyraz ${M(`a_{${n}}`)}.`,
       fields: [F(M(`a_{${n}} =`), an)],
       hints: [t`Skorzystaj ze wzoru ${M(t`a_n = a_1\cdot q^{n-1}`)}.`, t`Potęga to ${M(`${n}-1 = ${n - 1}`)}. Najpierw potęgujesz iloraz, dopiero potem mnożysz przez ${M('a_1')}.`],
@@ -283,7 +283,7 @@ const GG = {
     const q = opt[0], den = opt[1];
     const a1 = den === 1 ? pick([1, 2, 3, 4, -1, -2]) : pw(den, 5) * (den === 2 ? pick([1, 2, 3]) : 1);
     const first = [0, 1, 2, 3].map(i => a1 * pw(q, i)), a6 = a1 * pw(q, 5);
-    return mk({ skill: 'iloraz i dalszy wyraz',
+    return mk({ verify: () => { const q0 = first[1] / first[0]; let x = first[0]; for (let i = 1; i < 6; i++) x *= q0; return near(q0, q) && near(first[3] / first[2], q) && near(x, a6); }, skill: 'iloraz i dalszy wyraz',
       text: t`Początkowe wyrazy ciągu geometrycznego to ${M(first.map(T).join(',\\ ') + t`,\ \ldots`)}. Wyznacz iloraz ${M('q')} tego ciągu i oblicz ${M('a_6')}.`,
       fields: [F(M('q ='), q), F(M('a_6 ='), a6)],
       hints: [t`Iloraz to ${M(t`q = \frac{a_2}{a_1}`)} – dzielisz, a nie odejmujesz.`, t`${M('a_6 = a_4\\cdot q^2')}.`],
@@ -294,7 +294,7 @@ const GG = {
   function middle() {
     const d = pick([1, 2, 3, 5]); let u = ri(1, 6), v = ri(1, 6); while (v === u) v = ri(1, 6);
     const a = d * u * u, c = d * v * v, x = d * u * v;
-    return mk({ skill: 'warunek b² = a·c',
+    return mk({ verify: () => x > 0 && x * x === a * c && near(x / a, c / x), skill: 'warunek b² = a·c',
       text: t`Liczby ${M(`${a}`)}, ${M('x')}, ${M(`${c}`)} w podanej kolejności tworzą ciąg geometryczny o wyrazach dodatnich. Oblicz ${M('x')}.`,
       fields: [F(M('x ='), x)],
       hints: [t`W ciągu geometrycznym kwadrat środkowego wyrazu równa się iloczynowi sąsiadów: ${M('b^2 = a\\cdot c')}.`, t`Policz iloczyn skrajnych wyrazów i wyciągnij z niego pierwiastek. Sprawdź w treści, jaki znak ma mieć szukany wyraz.`],
@@ -303,7 +303,7 @@ const GG = {
   },
   function shortSum() {
     const a1 = ri(1, 5), q = pick([2, 3, -2]), n = pick([4, 5]), terms = Array.from({ length: n }, (_, i) => a1 * pw(q, i)), S = terms.reduce((s, x) => s + x, 0);
-    return mk({ skill: 'suma kilku wyrazów',
+    return mk({ verify: () => near(a1 * (1 - Math.pow(q, n)) / (1 - q), S), skill: 'suma kilku wyrazów',
       text: t`Ciąg geometryczny ${M('(a_n)')} ma pierwszy wyraz ${M(`a_1 = ${a1}`)} i iloraz ${M(`q = ${q}`)}. Oblicz sumę ${M(`${n}`)} początkowych wyrazów tego ciągu.`,
       fields: [F(M(`S_{${n}} =`), S)],
       hints: [t`Możesz wypisać wyrazy i je dodać albo użyć wzoru ${M(t`S_n = a_1\cdot\frac{1-q^n}{1-q}`)}.`, t`Każdy następny wyraz powstaje z poprzedniego przez pomnożenie przez ${M('q')}. Uważaj na znaki, gdy ${M('q')} jest ujemne.`],
@@ -317,7 +317,7 @@ const GG = {
     if (Math.random() < 0.5) {
       const k = ri(2, 3); let q = pick([2, 3, 0.5]), a1 = q === 0.5 ? pw(2, k + 2) * pick([1, 3]) : pick([1, 2, 3, 4, 5]);
       const ak = a1 * pw(q, k - 1), am = a1 * pw(q, k + 1);
-      return mk({ skill: 'q i a₁ z dwóch wyrazów',
+      return mk({ verify: () => { const seq = [a1]; for (let i = 1; i < k + 2; i++) seq.push(seq[i - 1] * q); return near(seq[k - 1], ak) && near(seq[k + 1], am); }, skill: 'q i a₁ z dwóch wyrazów',
         text: t`Ciąg geometryczny ${M('(a_n)')} ma wszystkie wyrazy dodatnie oraz ${M(`a_{${k}} = ${T(ak)}`)} i ${M(`a_{${k + 2}} = ${T(am)}`)}. Wyznacz iloraz ${M('q')} i pierwszy wyraz ${M('a_1')}.`,
         fields: [F(M('q ='), q), F(M('a_1 ='), a1)],
         hints: [t`${M(`a_{${k + 2}} = a_{${k}}\\cdot q^2`)}. Podziel wyrazy przez siebie.`, t`Z ${M('q^2')} wychodzą dwie wartości ${M('q')} – wybierz tę, przy której wszystkie wyrazy są dodatnie.`],
@@ -327,7 +327,7 @@ const GG = {
         answer: M(`q = ${T(q)},\\quad a_1 = ${T(a1)}`), plot: { f: n => a1 * pw(q, n - 1) } });
     }
     const q = pick([2, -2, 3, -3]), a1 = pick([1, 2, 3, -1, -2]), k = ri(1, 2), ak = a1 * pw(q, k - 1), am = a1 * pw(q, k + 2);
-    return mk({ skill: 'q i a₁ z dwóch wyrazów',
+    return mk({ verify: () => { const seq = [a1]; for (let i = 1; i < k + 3; i++) seq.push(seq[i - 1] * q); return near(seq[k - 1], ak) && near(seq[k + 2], am); }, skill: 'q i a₁ z dwóch wyrazów',
       text: t`W ciągu geometrycznym ${M('(a_n)')} dane są ${M(`a_{${k}} = ${ak}`)} oraz ${M(`a_{${k + 3}} = ${am}`)}. Wyznacz iloraz ${M('q')} i pierwszy wyraz ${M('a_1')}.`,
       fields: [F(M('q ='), q), F(M('a_1 ='), a1)],
       hints: [t`${M(`a_{${k + 3}} = a_{${k}}\\cdot q^3`)}.`, t`Pierwiastek trzeciego stopnia z liczby ujemnej jest ujemny.`],
@@ -362,7 +362,7 @@ const GG = {
   },
   function bacteria() {
     const N0 = pick([100, 150, 200, 250, 300, 500]), q = pick([2, 3]), h = ri(4, q === 2 ? 8 : 6), N = N0 * pw(q, h);
-    return mk({ skill: 'zadanie z treścią',
+    return mk({ verify: () => { let x = N0; for (let i = 0; i < h; i++) x *= q; return x === N; }, skill: 'zadanie z treścią',
       text: t`Na początku doświadczenia w próbce było ${N0} bakterii. Co godzinę liczba bakterii ${q === 2 ? 'podwaja się' : 'potraja się'}. Ile bakterii będzie w próbce po ${h} godzinach?`,
       fields: [F('liczba bakterii:', N)],
       hints: [t`Liczba bakterii tworzy ciąg geometryczny o ilorazie ${M(`${q}`)}.`, t`Uważaj na numerację: po ${h} godzinach mnożysz przez ${M(`${q}`)} dokładnie ${h} razy.`],
@@ -372,7 +372,7 @@ const GG = {
   },
   function whichTerm() {
     const a1 = pick([1, 2, 3, 5]), q = pick([2, 3]), n = ri(5, q === 2 ? 10 : 8), V = a1 * pw(q, n - 1);
-    return mk({ skill: 'który to wyraz?',
+    return mk({ verify: () => { let x = a1, idx = 1; while (x < V && idx < 60) { x *= q; idx++; } return x === V && idx === n; }, skill: 'który to wyraz?',
       text: t`Ciąg geometryczny ma pierwszy wyraz ${M(`a_1 = ${a1}`)} i iloraz ${M(`q = ${q}`)}. Który wyraz tego ciągu jest równy ${M(`${V}`)}?`,
       fields: [F(M('n ='), n)],
       hints: [t`Ułóż równanie ${M(`${a1 === 1 ? '' : a1 + '\\cdot '}${q}^{n-1} = ${V}`)}.`, t`Zapisz prawą stronę jako potęgę liczby ${M(`${q}`)}.`],
@@ -449,7 +449,7 @@ const GR = {
 1: [
   function formula() {
     const o = formulaPool(), val = o.f(o.k);
-    return mk({ skill: 'wyraz ze wzoru ogólnego',
+    return mk({ verify: () => { const js = o.sub.replace(/\\frac\{([^{}]*)\}\{([^{}]*)\}/g, '(($1)/($2))').replace(/\\cdot/g, '*').replace(/(\(-?\d+\)|\d+)\^(?:\{(\d+)\}|(\d))/g, (z, b, e1, e2) => `Math.pow(${b},${e1 || e2})`); return near(Function('return ' + js)(), val); }, skill: 'wyraz ze wzoru ogólnego',
       text: t`Ciąg ${M('(a_n)')} jest określony wzorem ${M(`a_n = ${o.tex}`)} dla ${M(t`n \geq 1`)}. Oblicz wyraz ${M(`a_{${o.k}}`)}.`,
       fields: [F(M(`a_{${o.k}} =`), val)], help: 'Ułamek wpisz jako np. 7/9.',
       hints: [t`Wstaw ${M(`n = ${o.k}`)} w miejsce każdego ${M('n')} we wzorze.`, t`Pamiętaj o kolejności działań: najpierw potęgowanie, potem mnożenie.`],
@@ -472,7 +472,7 @@ const GR = {
     const a1 = ri(-3, 5), a2 = ri(-2, 6), sign = pick([1, -1]);
     const a = [a1, a2]; for (let i = 2; i < 6; i++) a.push(a[i - 1] + sign * a[i - 2]);
     const rec = sign === 1 ? 'a_{n+2} = a_{n+1} + a_n' : 'a_{n+2} = a_{n+1} - a_n';
-    return mk({ skill: 'ciąg rekurencyjny',
+    return mk({ verify: () => { const g = i => (i === 1 ? a1 : i === 2 ? a2 : g(i - 1) + sign * g(i - 2)); return g(6) === a[5]; }, skill: 'ciąg rekurencyjny',
       text: t`Ciąg ${M('(a_n)')} jest określony wzorem rekurencyjnym: ${M(`a_1 = ${a1}`)}, ${M(`a_2 = ${a2}`)}, ${M(rec)} dla ${M(t`n \geq 1`)}. Oblicz ${M('a_6')}.`,
       fields: [F(M('a_6 ='), a[5])],
       hints: [t`Każdy wyraz od trzeciego liczysz z dwóch poprzednich. Licz po kolei ${M('a_3, a_4, a_5, a_6')}.`, t`Zapisuj wyniki po kolei, żeby nie pomylić wyrazu poprzedniego z przedostatnim. Uważaj na odejmowanie liczb ujemnych.`],
@@ -481,7 +481,7 @@ const GR = {
   },
   function whichTermSimple() {
     const c = ri(-9, 9), n = ri(4, 12), V = n * n + c;
-    return mk({ skill: 'który to wyraz?',
+    return mk({ verify: () => { const hits = []; for (let i = 1; i <= 300; i++) if (i * i + c === V) hits.push(i); return hits.length === 1 && hits[0] === n; }, skill: 'który to wyraz?',
       text: t`Ciąg ${M('(a_n)')} jest określony wzorem ${M(`a_n = ${poly([1, 0, c])}`)} dla ${M(t`n \geq 1`)}. Który wyraz tego ciągu jest równy ${M(`${V}`)}?`,
       fields: [F(M('n ='), n)],
       hints: [t`Rozwiąż równanie ${M(`${poly([1, 0, c])} = ${V}`)}. Numer wyrazu musi być liczbą naturalną dodatnią.`, t`Przenieś liczbę na prawą stronę – dostaniesz równanie postaci ${M('n^2 = k')}. Z dwóch rozwiązań wybierz dodatnie.`],
@@ -500,7 +500,7 @@ const GR = {
     else if (kind === 5) { const c = pick([16, 32, 48, 64]); f = n => c * pw(0.5, n); tex = t`${c}\cdot\left(\frac{1}{2}\right)^n`; ans = 1; why = t`Wyrazy są dodatnie i ${M(t`\frac{a_{n+1}}{a_n} = \frac{1}{2} < 1`)}, więc każdy kolejny jest mniejszy.`; }
     else { const b = pick([-2, -3]); f = n => pw(b, n); tex = t`(${b})^n`; ans = 2; why = t`Iloraz jest ujemny, więc znaki się zmieniają: ${M(`a_1 = ${f(1)},\\ a_2 = ${f(2)},\\ a_3 = ${f(3)}`)}.`; }
     const labels = ['rosnący', 'malejący', 'ani rosnący, ani malejący'];
-    return mk({ skill: 'monotoniczność',
+    return mk({ verify: () => { let up = true, down = true; for (let i = 1; i < 14; i++) { if (!(f(i + 1) > f(i))) up = false; if (!(f(i + 1) < f(i))) down = false; } return ans === (up ? 0 : down ? 1 : 2); }, skill: 'monotoniczność',
       text: t`Ciąg ${M('(a_n)')} jest określony wzorem ${M(`a_n = ${tex}`)} dla ${M(t`n \geq 1`)}. Ten ciąg jest:`,
       choices: labels, ans,
       hints: [t`Zbadaj znak różnicy ${M('a_{n+1} - a_n')} albo wypisz kilka pierwszych wyrazów i zobacz, co się dzieje.`, t`Ciąg jest rosnący, gdy <b>każdy</b> następny wyraz jest większy od poprzedniego, a malejący – gdy każdy jest mniejszy. Jeśli raz rośnie, a raz maleje, nie jest ani rosnący, ani malejący.`],
@@ -549,7 +549,7 @@ const GR = {
   function rumour() {
     const a1 = pick([0.1, 0.2, 0.4, 0.5]), g = n => { let x = a1; for (let i = 1; i < n; i++) x = x + 0.5 * x * (1 - x); return x; };
     const a2 = g(2), a3 = g(3), a3r = Math.round(a3 * 1000) / 1000;
-    return mk({ skill: 'model rozchodzenia się plotki',
+    return mk({ verify: () => { const b2 = a1 + a1 * (1 - a1) / 2, b3 = b2 + b2 * (1 - b2) / 2; return Math.abs(b3 - a3r) <= 0.0005 + 1e-12; }, skill: 'model rozchodzenia się plotki',
       text: t`Ułamek mieszkańców osiedla, którzy słyszeli plotkę po ${M('n')} dniach, opisuje ciąg: ${M(`a_1 = ${D(a1)}`)}, ${M(t`a_{n+1} = a_n + \frac{1}{2}a_n(1 - a_n)`)}. Oblicz ${M('a_3')}. Wynik zaokrąglij do części tysięcznych.`,
       fields: [F(M('a_3 \\approx'), a3r, { tol: 0.0011 })], help: 'Liczbę dziesiętną wpisz z przecinkiem, np. 0,381.',
       hints: [t`Najpierw policz ${M('a_2')} – wstaw ${M(`a_1 = ${D(a1)}`)} do wzoru. Potem w ten sam sposób ${M('a_3')}.`, t`Zaokrąglaj dopiero wynik końcowy. Części tysięczne to trzecie miejsce po przecinku.`],
@@ -689,7 +689,7 @@ const bank = {};
 for (const tp of Object.keys(BANK)) { bank[tp] = {}; for (const lv of [1, 2, 3]) bank[tp][lv] = BANK[tp][lv].map(g => adapt(g, lv)); }
 
 MATURA.dzial({
-  id: 'ciagi', store: 'ciagi-matura-v1', title: 'Ciągi', seq: 'a₁, a₂, a₃, …', legacy: true,
+  id: 'ciagi', store: 'ciagi-matura-v1', title: 'Ciągi', seq: 'a₁, a₂, a₃, …',
   lead: 'Ciąg arytmetyczny, geometryczny i ciągi określone wzorem lub rekurencyjnie. Przy rozwiązaniu zobaczysz wykres początkowych wyrazów.',
   topics: TOPIC_NAME, short: { A: 'Arytmetyczny', G: 'Geometryczny' },
   bank: bank, formulas: FORM

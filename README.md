@@ -29,7 +29,7 @@ Zakres zadań jest zgodny z wymaganiami egzaminacyjnymi obowiązującymi od 2025
 - `js/<dział>.js` – generatory zadań i ściąga jednego działu.
 - `css/matura.css` – wspólny wygląd.
 
-Ciągi i planimetria pochodzą z pierwszej wersji aplikacji: ich zadania są w starszym formacie, a na końcu plików jest krótki adapter do wspólnego silnika. Część tych zadań nie ma jeszcze własnego `check` (test wypisuje, ile).
+Ciągi i planimetria pochodzą z pierwszej wersji aplikacji: ich zadania są w starszym formacie, a na końcu plików jest krótki adapter do wspólnego silnika. Każde zadanie ma własne przeliczenie wyniku (`verify`), w planimetrii najczęściej na współrzędnych punktów z rysunku.
 
 Nowy dział to jeden plik `js/<dział>.js`, strona `<dział>.html` (kopia np. `liczby.html`) i karta w `index.html`.
 
