@@ -18,8 +18,8 @@ Strona: https://berechowskab-sketch.github.io/Matematyka/
 | Kombinatoryka i prawdopodobieństwo | `kombinatoryka.html` + `js/kombinatoryka.js` |
 | Statystyka | `statystyka.html` + `js/statystyka.js` |
 | Optymalizacja | `optymalizacja.html` + `js/optymalizacja.js` |
-| Ciągi | `ciagi.html` (starszy, samodzielny plik) |
-| Planimetria | `planimetria.html` (starszy, samodzielny plik) |
+| Ciągi | `ciagi.html` + `js/ciagi.js` |
+| Planimetria | `planimetria.html` + `js/planimetria.js` |
 
 Zakres zadań jest zgodny z wymaganiami egzaminacyjnymi obowiązującymi od 2025 r. (np. bez nierówności z wartością bezwzględną, bez twierdzenia sinusów, bez odchylenia standardowego).
 
@@ -28,6 +28,8 @@ Zakres zadań jest zgodny z wymaganiami egzaminacyjnymi obowiązującymi od 2025
 - `js/silnik.js` – wspólny silnik: losowanie zadań, sprawdzanie odpowiedzi, wykresy, interfejs.
 - `js/<dział>.js` – generatory zadań i ściąga jednego działu.
 - `css/matura.css` – wspólny wygląd.
+
+Ciągi i planimetria pochodzą z pierwszej wersji aplikacji: ich zadania są w starszym formacie, a na końcu plików jest krótki adapter do wspólnego silnika. Część tych zadań nie ma jeszcze własnego `check` (test wypisuje, ile).
 
 Nowy dział to jeden plik `js/<dział>.js`, strona `<dział>.html` (kopia np. `liczby.html`) i karta w `index.html`.
 

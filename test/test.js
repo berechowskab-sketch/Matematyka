@@ -5,7 +5,7 @@ const S = require(path.join(__dirname, '..', 'js', 'silnik.js'));
 Object.assign(globalThis, S);
 const IDS = process.env.DZIALY ? process.env.DZIALY.split(',') : require('fs').readdirSync(path.join(__dirname, '..', 'js')).filter(f => f.endsWith('.js') && f !== 'silnik.js').map(f => f.slice(0, -3)).sort();
 const RUNS = +process.argv[2] || 400;
-let total = 0, gens = 0; const errs = [];
+let total = 0, gens = 0; const errs = [], noCheck = new Set();
 for (const id of IDS) {
   require(path.join(__dirname, '..', 'js', id + '.js'));
   const cfg = MATURA.cfgs[id];
@@ -29,7 +29,7 @@ for (const id of IDS) {
           if (!tk.text || !tk.skill || !tk.answer) bad('brak treści/umiejętności/odpowiedzi');
           if (tk.hints.length !== 2) bad('liczba podpowiedzi: ' + tk.hints.length);
           if (!tk.steps.length) bad('brak kroków rozwiązania');
-          if (typeof tk.check !== 'function') bad('brak check()'); else { let ok = false; try { ok = tk.check() === true; } catch (e) { bad('check rzucił: ' + e.message); } if (!ok) bad('check() = false | ' + tk.text.replace(/<[^>]+>/g, '').slice(0, 140) + ' → ' + tk.answer); }
+          if (typeof tk.check !== 'function') { if (cfg.legacy) noCheck.add(name); else bad('brak check()'); } else { let ok = false; try { ok = tk.check() === true; } catch (e) { bad('check rzucił: ' + e.message); } if (!ok) bad('check() = false | ' + tk.text.replace(/<[^>]+>/g, '').slice(0, 140) + ' → ' + tk.answer); }
           const kinds = (tk.choices ? 1 : 0) + (tk.tf ? 1 : 0) + (tk.fields.length ? 1 : 0);
           if (kinds !== 1) bad('zadanie musi mieć dokładnie jeden sposób odpowiedzi');
           if (tk.choices) {
@@ -42,6 +42,7 @@ for (const id of IDS) {
           }
           if (tk.tf) { if (tk.tf.length < 2 || tk.tf.some(r => typeof r.v !== 'boolean' || !r.s)) bad('złe zdania P/F'); }
           tk.fields.forEach(f => {
+            if (f.set) { if (!Array.isArray(f.ans) || !f.ans.every(Number.isFinite)) bad('pole: zła lista odpowiedzi'); if (checkField(f, f.show) !== 'ok') bad('pole: wzorcowa lista nie przechodzi'); if (checkField(f, f.ans.slice().reverse().join(';').replace(/\./g, ',')) !== 'ok') bad('pole: lista w innej kolejności nie przechodzi'); if (checkField(f, String(f.ans[0])) === 'ok' && f.ans.length > 1) bad('pole: przyjmuje niepełną listę'); return; }
             if (!Number.isFinite(f.ans)) bad('pole: odpowiedź nie jest liczbą');
             if (checkField(f, f.show) !== 'ok') bad(`pole: wzorcowa odpowiedź „${f.show}” nie przechodzi sprawdzania (${checkField(f, f.show)})`);
             if (checkField(f, String(f.ans + 1)) === 'ok') bad('pole: przyjmuje błędną odpowiedź');
@@ -54,5 +55,6 @@ for (const id of IDS) {
   }
 }
 console.log(`${gens} typów zadań, ${total} wylosowanych zadań, błędów: ${errs.length}`);
+if (noCheck.size) console.log(`  (typy zadań ze starszych działów bez własnego przeliczenia wyniku: ${noCheck.size})`);
 errs.forEach(e => console.log(' ✗ ' + e));
 process.exit(errs.length ? 1 : 0);

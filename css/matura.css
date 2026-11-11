@@ -202,3 +202,16 @@ body{margin:0}
 .dt th{text-align:left;font-weight:700;background:var(--accent-soft);color:var(--ink);white-space:nowrap}
 .tablewrap{overflow-x:auto}
 .plot .ds{fill:none}
+.plotbox{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 12px 4px;overflow-x:auto}
+.plotbox .cap{font-size:.8rem;color:var(--muted);margin:0 0 4px}
+.plotbox svg{display:block;max-width:100%;height:auto}
+.plotbox .axis{stroke:var(--muted);stroke-width:1}
+.plotbox .guide{stroke:var(--line);stroke-width:1;stroke-dasharray:3 4}
+.plotbox .pt{fill:var(--accent)}
+.plotbox .pt.hi{fill:var(--ok)}
+.plotbox .ring{fill:none;stroke:var(--ok);stroke-width:2}
+.plotbox .vl{fill:var(--ink);font:12px var(--f-mono)}
+.plotbox .xl{fill:var(--muted);font:12px var(--f-mono)}
+.plotbox .zl{fill:var(--muted);font:11px var(--f-mono)}
+.solfig{margin-top:14px}
+.solfig .plotbox{border:0;padding:0}

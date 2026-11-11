@@ -110,7 +110,7 @@ const need = c => { if (!c) throw RETRY; };
 const LEVEL_NAME = { 1: 'Łatwy', 2: 'Średni', 3: 'Trudny' };
 function mk(o) { return Object.assign({ fields: [], choices: null, tf: null, hints: [], steps: [], fig: null, pts: 1, check: null }, o); }
 /* pole odpowiedzi: liczba wymierna → wymagany gotowy wynik (plain); obiekt R(k, n) → wolno wpisać √ */
-function F(label, ans, extra) { return Object.assign({ label, ans: rv(ans), show: rx(ans), plain: typeof ans === 'number' }, extra || {}); }
+function F(label, ans, extra) { return Object.assign({ label, ans: rv(ans), show: rx(ans), plain: typeof ans === 'number', pi: !!(ans && ans.pi) }, extra || {}); }
 /* " + 3" / " - 3" oraz jednomiany i wielomiany w LaTeX-u */
 const pm = x => (x < 0 ? ' - ' : ' + ') + T(Math.abs(x));
 function poly(cs, v = 'x') {
@@ -202,6 +202,13 @@ function clean(raw) { return normalize(String(raw).replace(/\s*(%|zł|zl|lat|lat
 function checkField(field, raw) {
   if (!String(raw).trim()) return 'empty';
   if (field.unit && field.unit.indexOf('π') >= 0) raw = String(raw).replace(/\s*[·*]?\s*(π|pi)\s*$/i, '');
+  if (field.set) { /* kilka odpowiedzi oddzielonych średnikiem, kolejność dowolna */
+    const tl = field.tol || 1e-9, eq = (x, y) => Math.abs(x - y) <= tl * Math.max(1, Math.abs(y));
+    const vals = String(raw).split(/;|\s+lub\s+|\s+i\s+/i).map(q => q.trim()).filter(Boolean).map(q => { const c = clean(q); if (!/^-?(\d+(\.\d+)?|\.\d+)(\/\d+)?$/.test(c)) return NaN; try { return evalExpr(c); } catch (e) { return NaN; } });
+    if (!vals.length || vals.some(x => !Number.isFinite(x))) return 'invalid';
+    const uniq = vals.filter((x, i) => vals.findIndex(y => eq(x, y)) === i);
+    return uniq.length === field.ans.length && field.ans.every(x => uniq.some(u => eq(u, x))) ? 'ok' : 'bad';
+  }
   const s = clean(raw); let v;
   try { v = s ? evalExpr(s) : NaN; } catch (e) { v = NaN; }
   if (!Number.isFinite(v)) return 'invalid';
@@ -222,7 +229,7 @@ const QUIPS = {
   streak: { 3: 'Trzy z rzędu. Hat-trick!', 5: 'Pięć z rzędu. Ktoś tu się rozkręca.', 10: 'Dziesięć z rzędu! Może czas na poziom wyżej?', 15: 'Piętnaście z rzędu. CKE prosi o litość.', 20: 'Dwadzieścia z rzędu. To już nie seria, to styl życia.' }
 };
 
-if (typeof module !== 'undefined') module.exports = { sp, DOK, PF, zl, t, ri, pick, shuffle, near, gcd, isInt, frac, D, T, TF, N, P, M, txt, R, rv, rt, rx, sq, mk, F, pm, poly, xm, IV, UN, INF, opts, plot, RETRY, need, MATURA, generate, checkField, clean, evalExpr, normalize, LEVEL_NAME, QUIPS };
+if (typeof module !== 'undefined') module.exports = { dg, L, K, rad, sin, cos, sp, DOK, PF, zl, t, ri, pick, shuffle, near, gcd, isInt, frac, D, T, TF, N, P, M, txt, R, rv, rt, rx, sq, mk, F, pm, poly, xm, IV, UN, INF, opts, plot, RETRY, need, MATURA, generate, checkField, clean, evalExpr, normalize, LEVEL_NAME, QUIPS };
 
 /* ====== Interfejs ====== */
 MATURA.dzial = function (cfg) {
@@ -274,6 +281,7 @@ MATURA.dzial = function (cfg) {
       <section class="solution" id="solution" hidden>
         <h3>Rozwiązanie krok po kroku</h3>
         <ol class="steps" id="steps"></ol>
+        <div class="figbox solfig" id="solfig" hidden></div>
         <div class="answer" id="final"></div>
       </section>
     </article>
@@ -351,11 +359,11 @@ MATURA.dzial = function (cfg) {
     } else {
       const expr = tk.fields.some(f => !f.plain);
       a = '<div class="fields">' + tk.fields.map((f, i) => `<label class="field" id="fw${i}"><span class="flabel">${f.label}</span><input id="f${i}" type="text" inputmode="text" spellcheck="false" autocapitalize="off" aria-label="Odpowiedź ${i + 1}">${f.unit ? `<span class="unit">${f.unit}</span>` : ''}<span class="tick" aria-hidden="true"></span></label>`).join('') + '</div>';
-      a += '<div class="keys"><span class="klab">Wstaw:</span>' + (expr ? '<button type="button" class="key" data-ins="√" aria-label="Wstaw pierwiastek">√</button>' : '') + '<button type="button" class="key" data-ins="−" aria-label="Wstaw minus">−</button><button type="button" class="key" data-ins="/" aria-label="Wstaw kreskę ułamkową">/</button></div>';
+      a += '<div class="keys"><span class="klab">Wstaw:</span>' + (expr ? '<button type="button" class="key" data-ins="√" aria-label="Wstaw pierwiastek">√</button>' : '') + (tk.fields.some(f => f.pi) ? '<button type="button" class="key" data-ins="π" aria-label="Wstaw pi">π</button>' : '') + '<button type="button" class="key" data-ins="−" aria-label="Wstaw minus">−</button><button type="button" class="key" data-ins="/" aria-label="Wstaw kreskę ułamkową">/</button></div>';
       a += `<p class="inputhelp">${tk.help || (expr ? 'Ułamek wpisz jako 3/4, liczbę dziesiętną z przecinkiem: 4,5. Pierwiastek: przycisk √, np. 2√3.' : 'Wpisz gotowy wynik: liczbę całkowitą, ułamek (np. −3/4) albo liczbę dziesiętną z przecinkiem (np. 4,5).')}</p>`;
     }
     setMath($('answer-area'), a);
-    $('feedback').hidden = true; quip(null); $('hints').innerHTML = ''; $('solution').hidden = true;
+    $('feedback').hidden = true; quip(null); $('hints').innerHTML = ''; $('solution').hidden = true; $('solfig').hidden = true; $('solfig').innerHTML = '';
     $('btn-hint').disabled = false; $('btn-hint').textContent = 'Podpowiedź 1 z ' + tk.hints.length;
     const area = $('answer-area');
     if (tk.choices) area.querySelectorAll('.choice').forEach(b => b.addEventListener('click', () => {
@@ -441,6 +449,7 @@ MATURA.dzial = function (cfg) {
     }
     setMath($('steps'), tk.steps.map(s => `<li>${s}</li>`).join(''));
     setMath($('final'), `<span class="lab">Odpowiedź:</span>${tk.answer}`);
+    if (tk.solFig) { setMath($('solfig'), tk.solFig); $('solfig').hidden = false; }
     $('solution').hidden = false;
     if (manual) $('solution').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
