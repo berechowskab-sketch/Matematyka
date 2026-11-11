@@ -318,40 +318,27 @@ const GW = {
   }
 ],
 2: [
-  function absIneq() {
-    const a = pick([-6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6]), b = ri(1, 6), type = pick(['<', '\\leq', '>', '\\geq']), cl = type.length > 1, inside = type === '<' || type === '\\leq';
-    const In = (c, k) => IV(c - b, c + b, k, k), Out = (c, k) => UN(IV(-INF, c - b, false, k), IV(c + b, INF, k, false));
-    const o = opts(inside ? In(a, cl) : Out(a, cl), [inside ? Out(a, cl) : In(a, cl), In(-a, cl), Out(-a, cl), inside ? In(a, !cl) : Out(a, !cl), IV(-b, b, cl, cl)]);
-    const test = x => (type === '<' ? Math.abs(x - a) < b : type === '\\leq' ? Math.abs(x - a) <= b : type === '>' ? Math.abs(x - a) > b : Math.abs(x - a) >= b);
-    return mk(Object.assign({ skill: 'nierówność z wartością bezwzględną',
-      text: DOK + t`Zbiorem wszystkich rozwiązań nierówności ${M(t`|x${pm(-a)}| ${type} ${b}`)} jest`,
-      hints: [t`${M(t`|x${pm(-a)}|`)} to odległość ${M('x')} od liczby ${M(a)}. Odległość ma być ${inside ? 'mniejsza' : 'większa'}${cl ? ' lub równa' : ''} ${inside ? 'od' : 'niż'} ${M(b)}.`, t`Zaznacz na osi punkty ${M(`${a} - ${b} = ${a - b}`)} i ${M(`${a} + ${b} = ${a + b}`)}. Rozwiązania leżą ${inside ? 'między nimi' : 'na zewnątrz'}.`],
-      steps: [t`Środek: ${M(a)}, promień: ${M(b)}. Punkty graniczne: ${M(a - b)} i ${M(a + b)}.`, inside ? t`Odległość ${cl ? 'nie większa niż' : 'mniejsza niż'} ${M(b)}: liczby między ${M(a - b)} a ${M(a + b)}${cl ? ', razem z końcami' : ', bez końców'}.` : t`Odległość ${cl ? 'nie mniejsza niż' : 'większa niż'} ${M(b)}: liczby na lewo od ${M(a - b)} lub na prawo od ${M(a + b)}${cl ? ', razem z końcami' : ', bez końców'}.`, M(t`x \in ${inside ? In(a, cl) : Out(a, cl)}`)],
-      answer: M(t`x \in ${inside ? In(a, cl) : Out(a, cl)}`),
-      check: () => { for (let x = -15; x <= 15; x += 0.5) { const inI = cl ? x >= a - b && x <= a + b : x > a - b && x < a + b, mine = inside ? inI : (cl ? x <= a - b || x >= a + b : x < a - b || x > a + b); if (mine !== test(x)) return false; } return true; } }, o));
+  function absEq2() {
+    const k = pick([2, 3, 4]), a = pick([-7, -5, -3, -1, 1, 2, 3, 5, 7]), b = ri(1, 9), x1 = (-a - b) / k, x2 = (-a + b) / k;
+    return mk({ skill: 'równanie |kx + a| = b', pts: 2,
+      text: t`Rozwiąż równanie ${M(t`|${k}x${pm(a)}| = ${b}`)}.`,
+      fields: [F('Mniejsze rozwiązanie:', x1), F('Większe rozwiązanie:', x2)],
+      hints: [t`Wyrażenie między kreskami jest równe ${M(b)} albo ${M(-b)} – rozpisz dwa osobne równania.`, t`${M(t`${k}x${pm(a)} = ${b}`)} lub ${M(t`${k}x${pm(a)} = ${-b}`)}.`],
+      steps: [M(t`${k}x${pm(a)} = ${b} \iff ${k}x = ${b - a} \iff x = ${TF(x2)}`), M(t`${k}x${pm(a)} = ${-b} \iff ${k}x = ${-b - a} \iff x = ${TF(x1)}`)],
+      answer: M(t`x = ${TF(x1)}\ \text{lub}\ x = ${TF(x2)}`), check: () => x1 < x2 && [x1, x2].every(x => near(Math.abs(k * x + a), b)) });
   },
-  function absCount() {
-    const a = ri(-5, 5), b = pick([2, 3, 4, 5, 2.5, 3.5, 4.5]), strict = Math.random() < 0.5;
-    let cnt = 0, lo = null, hi = null; for (let x = -20; x <= 20; x++) if (strict ? Math.abs(x - a) < b : Math.abs(x - a) <= b) { cnt++; if (lo === null) lo = x; hi = x; }
-    const sign = strict ? '<' : t`\leq`;
-    return mk({ skill: 'liczby całkowite spełniające nierówność', pts: 2,
-      text: t`Ile liczb całkowitych spełnia nierówność ${M(t`|x${a ? pm(-a) : ''}| ${sign} ${T(b)}`)}?`,
-      fields: [F('Liczba liczb całkowitych:', cnt)],
-      hints: [t`Najpierw rozwiąż nierówność: to liczby odległe od ${M(a)} o ${strict ? 'mniej niż' : 'co najwyżej'} ${M(T(b))}.`, t`Rozwiązaniem jest przedział ${M(IV(a - b, a + b, !strict, !strict))}. Wypisz liczby całkowite z tego przedziału – uważaj na końce.`],
-      steps: [M(t`|x${a ? pm(-a) : ''}| ${sign} ${T(b)} \iff x\in ${IV(a - b, a + b, !strict, !strict)}`), t`Liczby całkowite w tym przedziale: od ${M(lo)} do ${M(hi)}.`, M(t`${hi} - ${P(lo)} + 1 = ${cnt}`)],
-      answer: M(`${cnt}`), check: () => cnt === hi - lo + 1 && (strict ? Math.abs(lo - 1 - a) >= b && Math.abs(hi + 1 - a) >= b : Math.abs(lo - 1 - a) > b && Math.abs(hi + 1 - a) > b) });
+  function absGeom() {
+    const a = pick([-7, -6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6, 7]), b = ri(1, 9); need(Math.abs(a) !== b);
+    const e = (c, r0) => t`|x${pm(-c)}| = ${r0}`;
+    const o = opts(e(a, b), [e(-a, b), e(b, Math.abs(a)), e(-b, Math.abs(a))]);
+    return mk(Object.assign({ skill: 'interpretacja geometryczna wartości bezwzględnej',
+      text: DOK + t`Na osi liczbowej zaznaczono wszystkie liczby, których odległość od liczby ${M(a)} jest równa ${M(b)}. Liczby te są wszystkimi rozwiązaniami równania`,
+      hints: [t`${M('|x - a|')} to odległość liczby ${M('x')} od liczby ${M('a')} na osi liczbowej.`, t`Odległość od liczby ${M(a)} zapisujemy jako ${M(t`|x - ${P(a)}|`)}. Uprość znak w środku.`],
+      steps: [t`Odległość liczby ${M('x')} od liczby ${M(a)}: ${M(t`|x - ${P(a)}| = |x${pm(-a)}|`)}.`, t`Ta odległość ma być równa ${M(b)}: ${M(e(a, b))}.`, t`Sprawdzenie: rozwiązaniami są ${M(a - b)} i ${M(a + b)} – obie liczby leżą w odległości ${M(b)} od ${M(a)}.`],
+      answer: M(e(a, b)), check: () => [a - b, a + b].every(x => near(Math.abs(x - a), b)) }, o));
   }
 ],
 3: [
-  function ivToAbs() {
-    const p = ri(-9, 4), q = p + ri(2, 11), m = (p + q) / 2, r = (q - p) / 2, cl = Math.random() < 0.6;
-    return mk({ skill: 'od przedziału do nierówności', pts: 2,
-      text: t`Zbiorem wszystkich rozwiązań nierówności ${M(t`|x - m| ${cl ? t`\leq` : '<'} r`)} jest przedział ${M(IV(p, q, cl, cl))}. Wyznacz liczby ${M('m')} i ${M('r')}.`,
-      fields: [F(M('m ='), m), F(M('r ='), r)],
-      hints: [t`${M('m')} to środek przedziału: średnia arytmetyczna jego końców.`, t`${M('r')} to odległość środka od każdego z końców, czyli połowa długości przedziału.`],
-      steps: [M(t`m = \frac{${p} + ${P(q)}}{2} = ${T(m)}`), M(t`r = \frac{${q} - ${P(p)}}{2} = ${T(r)}`)],
-      answer: M(t`m = ${T(m)},\quad r = ${T(r)}`), check: () => near(m - r, p) && near(m + r, q) });
-  },
   function absSqrt() {
     const n = pick([2, 3, 5, 6, 7, 10, 11, 13, 15, 17, 19]), fl = Math.floor(Math.sqrt(n)), a = fl - ri(0, 1), b = fl + ri(1, 3), sq2 = t`\sqrt{${n}}`; need(a >= 1);
     const first = Math.random() < 0.5 ? t`|${sq2} - ${a}|` : t`|${a} - ${sq2}|`, second = Math.random() < 0.5 ? t`|${sq2} - ${b}|` : t`|${b} - ${sq2}|`;
@@ -362,14 +349,25 @@ const GW = {
       steps: [t`${M(t`${sq2} > ${a}`)}, więc pierwszy składnik to ${M(t`${sq2} - ${a}`)}.`, t`${M(t`${sq2} < ${b}`)}, więc drugi składnik to ${M(t`${b} - ${sq2}`)}.`, M(t`${sq2} - ${a} + ${b} - ${sq2} = ${b - a}`)],
       answer: M(`${b - a}`), check: () => near(Math.abs(Math.sqrt(n) - a) + Math.abs(Math.sqrt(n) - b), b - a) });
   },
-  function absEq2() {
-    const k = pick([2, 3, 4]), a = pick([-7, -5, -3, -1, 1, 2, 3, 5, 7]), b = ri(1, 9), x1 = (-a - b) / k, x2 = (-a + b) / k;
-    return mk({ skill: 'równanie |kx + a| = b', pts: 2,
-      text: t`Rozwiąż równanie ${M(t`|${k}x${pm(a)}| = ${b}`)}.`,
-      fields: [F('Mniejsze rozwiązanie:', x1), F('Większe rozwiązanie:', x2)],
-      hints: [t`Wyrażenie między kreskami jest równe ${M(b)} albo ${M(-b)} – rozpisz dwa osobne równania.`, t`${M(t`${k}x${pm(a)} = ${b}`)} lub ${M(t`${k}x${pm(a)} = ${-b}`)}.`],
-      steps: [M(t`${k}x${pm(a)} = ${b} \iff ${k}x = ${b - a} \iff x = ${TF(x2)}`), M(t`${k}x${pm(a)} = ${-b} \iff ${k}x = ${-b - a} \iff x = ${TF(x1)}`)],
-      answer: M(t`x = ${TF(x1)}\ \text{lub}\ x = ${TF(x2)}`), check: () => x1 < x2 && [x1, x2].every(x => near(Math.abs(k * x + a), b)) });
+  function absScaled() {
+    const k = pick([2, 3, 4, 5]), a = pick([-6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6]), b = ri(1, 6), c = pick([-9, -7, -5, -3, -2, 2, 3, 4, 6, 8]), d = k * b + c;
+    return mk({ skill: 'równanie z wartością bezwzględną – porządkowanie', pts: 2,
+      text: t`Rozwiąż równanie ${M(t`${k}|x${pm(-a)}|${pm(c)} = ${d}`)}.`,
+      fields: [F('Mniejsze rozwiązanie:', a - b), F('Większe rozwiązanie:', a + b)],
+      hints: [t`Najpierw zostaw samą wartość bezwzględną po lewej stronie: przenieś ${M(c)} na prawą stronę i podziel przez ${M(k)}.`, t`Otrzymasz ${M(t`|x${pm(-a)}| = ${b}`)}, czyli liczby odległe od ${M(a)} o ${M(b)}.`],
+      steps: [M(t`${k}|x${pm(-a)}| = ${d} ${c < 0 ? '+' : '-'} ${Math.abs(c)} = ${d - c}`), M(t`|x${pm(-a)}| = ${b}`), M(t`x${pm(-a)} = ${b}\quad\text{lub}\quad x${pm(-a)} = ${-b}`), M(t`x = ${a + b}\quad\text{lub}\quad x = ${a - b}`)],
+      answer: M(t`x = ${a - b}\ \text{lub}\ x = ${a + b}`), check: () => [a - b, a + b].every(x => near(k * Math.abs(x - a) + c, d)) });
+  },
+  function absCountSol() {
+    const kind = ri(0, 2), LAB = ['nie ma rozwiązań.', 'ma dokładnie jedno rozwiązanie.', 'ma dokładnie dwa rozwiązania.'];
+    const a = pick([-6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6]), c = pick([-8, -6, -5, -3, -2, 2, 3, 5, 7, 9]), r0 = kind === 0 ? -ri(1, 6) : kind === 1 ? 0 : ri(1, 6), d = r0 + c;
+    const o = opts(LAB[kind], LAB.filter((x, i) => i !== kind), { n: 3, raw: true, keep: LAB });
+    return mk(Object.assign({ skill: 'liczba rozwiązań równania z wartością bezwzględną',
+      text: DOK + t`Równanie ${M(t`|x${pm(-a)}|${pm(c)} = ${d}`)}`,
+      hints: [t`Zostaw samą wartość bezwzględną po lewej stronie: ${M(t`|x${pm(-a)}| = ${d} ${c < 0 ? '+' : '-'} ${Math.abs(c)}`)}.`, t`Wartość bezwzględna nigdy nie jest ujemna. Równanie ${M('|x - a| = r')} ma dwa rozwiązania dla ${M('r > 0')}, jedno dla ${M('r = 0')} i żadnego dla ${M('r < 0')}.`],
+      steps: [M(t`|x${pm(-a)}| = ${d} ${c < 0 ? '+' : '-'} ${Math.abs(c)} = ${r0}`), r0 < 0 ? t`Wartość bezwzględna nie może być liczbą ujemną, więc równanie nie ma rozwiązań.` : r0 === 0 ? t`Odległość równa zero oznacza ${M(`x = ${a}`)} – jedno rozwiązanie.` : t`Odległość od ${M(a)} równa ${M(r0)}: ${M(`x = ${a - r0}`)} lub ${M(`x = ${a + r0}`)} – dwa rozwiązania.`],
+      answer: 'Równanie ' + LAB[kind],
+      check: () => { let n = 0; for (let x = -40; x <= 40; x += 0.5) if (near(Math.abs(x - a) + c, d)) n++; return n === kind; } }, o));
   }
 ]
 };
@@ -385,7 +383,7 @@ MATURA.dzial({
     P: [['działania na potęgach', r`\(a^m\cdot a^n = a^{m+n},\quad a^m : a^n = a^{m-n}\)<br>\((a^m)^n = a^{m\cdot n},\quad (ab)^n = a^n b^n\)`], ['wykładnik ujemny i zerowy', r`\(a^{-n} = \dfrac{1}{a^n},\quad a^0 = 1\)`], ['wykładnik wymierny', r`\(a^{\frac{1}{n}} = \sqrt[n]{a},\quad a^{\frac{m}{n}} = \sqrt[n]{a^m}\)`], ['pierwiastki', r`\(\sqrt{a\cdot b} = \sqrt a\cdot\sqrt b,\quad \sqrt{\dfrac ab} = \dfrac{\sqrt a}{\sqrt b}\)<br>uwaga: \(\sqrt{a + b} \neq \sqrt a + \sqrt b\)`], ['wzory skróconego mnożenia', r`\((a \pm b)^2 = a^2 \pm 2ab + b^2\)<br>\((a - b)(a + b) = a^2 - b^2\)`]],
     L: [['definicja', r`\(\log_a b = c \iff a^c = b\)<br>dla \(a > 0,\ a \neq 1,\ b > 0\)`], ['iloczyn i iloraz', r`\(\log_a (xy) = \log_a x + \log_a y\)<br>\(\log_a \dfrac xy = \log_a x - \log_a y\)`], ['potęga', r`\(\log_a x^n = n\cdot\log_a x\)`], ['warto pamiętać', r`\(\log_a 1 = 0,\quad \log_a a = 1\)<br>\(\log x\) oznacza \(\log_{10} x\)`]],
     C: [['procent liczby', r`\(p\%\) liczby \(x\) to \(\dfrac{p}{100}\cdot x\)`], ['podwyżka i obniżka', r`o \(p\%\) w górę: \(\left(1 + \tfrac{p}{100}\right)x\)<br>o \(p\%\) w dół: \(\left(1 - \tfrac{p}{100}\right)x\)`], ['procent składany', r`\(K_n = K\cdot\left(1 + \dfrac{p}{100}\right)^n\)<br>\(n\) – liczba okresów kapitalizacji, \(p\%\) – oprocentowanie w jednym okresie`], ['stężenie', r`\(\dfrac{\text{masa substancji}}{\text{masa roztworu}}\cdot 100\%\)`]],
-    W: [['definicja', r`\(|x| = x\) dla \(x \geq 0\)<br>\(|x| = -x\) dla \(x < 0\)`], ['odległość na osi', r`\(|x - a|\) to odległość liczby \(x\) od liczby \(a\)`], ['równanie i nierówności', r`\(|x - a| = r\): \(x = a - r\) lub \(x = a + r\)<br>\(|x - a| < r\): \(x \in (a - r,\ a + r)\)<br>\(|x - a| > r\): \(x \in (-\infty,\ a - r) \cup (a + r,\ +\infty)\)`]]
+    W: [['definicja', r`\(|x| = x\) dla \(x \geq 0\)<br>\(|x| = -x\) dla \(x < 0\)`], ['odległość na osi', r`\(|x - a|\) to odległość liczby \(x\) od liczby \(a\)`], ['równanie', r`\(|x - a| = r\) dla \(r > 0\): \(x = a - r\) lub \(x = a + r\)<br>dla \(r = 0\): jedno rozwiązanie \(x = a\)<br>dla \(r < 0\): brak rozwiązań`]]
   }
 });
 })();

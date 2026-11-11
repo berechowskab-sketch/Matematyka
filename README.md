@@ -6,14 +6,22 @@ Strona: https://berechowskab-sketch.github.io/Matematyka/
 
 ## Działy
 
-| Dział | Plik | Stan |
-|---|---|---|
-| Liczby rzeczywiste | `liczby.html` + `js/liczby.js` | gotowe |
-| Równania i nierówności | `rownania.html` + `js/rownania.js` | gotowe |
-| Funkcje | `funkcje.html` + `js/funkcje.js` | gotowe |
-| Ciągi | `ciagi.html` | gotowe |
-| Planimetria | `planimetria.html` | gotowe |
-| Wyrażenia algebraiczne, trygonometria, geometria analityczna, stereometria, kombinatoryka i prawdopodobieństwo, statystyka, optymalizacja | – | w przygotowaniu |
+| Dział | Pliki |
+|---|---|
+| Liczby rzeczywiste | `liczby.html` + `js/liczby.js` |
+| Wyrażenia algebraiczne | `wyrazenia.html` + `js/wyrazenia.js` |
+| Równania i nierówności | `rownania.html` + `js/rownania.js` |
+| Funkcje | `funkcje.html` + `js/funkcje.js` |
+| Trygonometria | `trygonometria.html` + `js/trygonometria.js` |
+| Geometria analityczna | `analityczna.html` + `js/analityczna.js` |
+| Stereometria | `stereometria.html` + `js/stereometria.js` |
+| Kombinatoryka i prawdopodobieństwo | `kombinatoryka.html` + `js/kombinatoryka.js` |
+| Statystyka | `statystyka.html` + `js/statystyka.js` |
+| Optymalizacja | `optymalizacja.html` + `js/optymalizacja.js` |
+| Ciągi | `ciagi.html` (starszy, samodzielny plik) |
+| Planimetria | `planimetria.html` (starszy, samodzielny plik) |
+
+Zakres zadań jest zgodny z wymaganiami egzaminacyjnymi obowiązującymi od 2025 r. (np. bez nierówności z wartością bezwzględną, bez twierdzenia sinusów, bez odchylenia standardowego).
 
 ## Budowa
 

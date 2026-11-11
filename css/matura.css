@@ -197,3 +197,8 @@ body{margin:0}
 .steps{list-style:none;counter-reset:st;padding-left:0}
 .steps li{counter-increment:st;position:relative;padding-left:1.9em}
 .steps li::before{content:counter(st) ".";position:absolute;left:0;top:0;font-family:var(--f-mono);font-weight:700;color:var(--accent)}
+.dt{border-collapse:collapse;margin:10px 0 4px;font-size:.98rem;background:var(--surface)}
+.dt th,.dt td{border:1px solid var(--line);padding:6px 12px;text-align:center}
+.dt th{text-align:left;font-weight:700;background:var(--accent-soft);color:var(--ink);white-space:nowrap}
+.tablewrap{overflow-x:auto}
+.plot .ds{fill:none}

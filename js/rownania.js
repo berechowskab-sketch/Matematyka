@@ -197,14 +197,14 @@ const GK = {
       steps: [M(`${poly([1, a, -bb])} ${SG[s]} 0`)].concat(quadSteps(1, a, -bb), [M(t`x \in ${IV(r1, r2, cl, cl)}`), t`Liczby całkowite w tym zbiorze: od ${M(cl ? r1 : r1 + 1)} do ${M(cl ? r2 : r2 - 1)}, razem ${M(cnt)}.`]),
       answer: M(`${cnt}`), check: () => cnt === (cl ? r2 - r1 + 1 : r2 - r1 - 1) && near(qv(1, a, -bb, r1), 0) && near(qv(1, a, -bb, r2), 0) });
   },
-  function paramOne() {
-    const a = pick([1, 1, 4, 9]), c = pick([1, 4, 9, 16, 25, 36]), m = 2 * Math.sqrt(a * c);
-    return mk({ skill: 'równanie z parametrem – jedno rozwiązanie', pts: 2,
-      text: t`Równanie ${M(`${poly([a, 0, 0])} + mx + ${c} = 0`)} z niewiadomą ${M('x')} ma dokładnie jedno rozwiązanie. Wyznacz dodatnią wartość ${M('m')}, dla której tak jest.`,
-      fields: [F(M('m ='), m)],
-      hints: [t`Równanie kwadratowe ma dokładnie jedno rozwiązanie, gdy ${M(t`\Delta = 0`)}.`, t`${M(t`\Delta = m^2 - 4\cdot ${a}\cdot ${c} = m^2 - ${4 * a * c}`)}.`],
-      steps: [M(t`\Delta = m^2 - 4\cdot ${a}\cdot ${c} = m^2 - ${4 * a * c}`), M(t`m^2 - ${4 * a * c} = 0 \iff m^2 = ${4 * a * c} \iff m = ${m}\ \text{lub}\ m = ${-m}`), t`Dodatnia wartość: ${M(`m = ${m}`)}.`],
-      answer: M(`m = ${m}`), check: () => near(m * m - 4 * a * c, 0) && m > 0 });
+  function oneRootKnown() {
+    const r1 = pick([-6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6]), r2 = pick([-7, -6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6, 7]), b = -(r1 + r2), c = r1 * r2; need(r1 !== r2 && b !== 0);
+    return mk({ skill: 'znane jedno rozwiązanie równania kwadratowego', pts: 2,
+      text: t`Liczba ${M(r1)} jest jednym z rozwiązań równania ${M(`x^2 + bx${pm(c)} = 0`)} z niewiadomą ${M('x')}. Wyznacz współczynnik ${M('b')} oraz drugie rozwiązanie tego równania.`,
+      fields: [F(M('b ='), b), F('Drugie rozwiązanie:', r2)],
+      hints: [t`Rozwiązanie spełnia równanie: wstaw ${M(`x = ${r1}`)} i wylicz ${M('b')}.`, t`${M(t`${P(r1)}^2 + b\cdot ${P(r1)}${pm(c)} = 0`)}. Gdy znasz ${M('b')}, rozwiąż równanie (delta) i wskaż drugie rozwiązanie.`],
+      steps: [M(t`${P(r1)}^2 + b\cdot ${P(r1)}${pm(c)} = 0 \iff ${poly([r1, 0], 'b')} = ${-(r1 * r1 + c)} \iff b = ${b}`), t`Równanie ma postać ${M(`${poly([1, b, c])} = 0`)}.`].concat(quadSteps(1, b, c), [t`Drugim rozwiązaniem jest ${M(`x = ${r2}`)}.`]),
+      answer: M(t`b = ${b},\quad x_2 = ${r2}`), check: () => near(qv(1, b, c, r1), 0) && near(qv(1, b, c, r2), 0) });
   },
   function rectangle() {
     const x = ri(3, 12), d = ri(2, 9), Pp = x * (x + d);
@@ -246,14 +246,15 @@ const GW = {
   }
 ],
 2: [
-  function commonFactor() {
-    const a = pick([1, 2, 3, -1]), k = ri(2, 8);
-    return mk({ skill: 'wyłączanie wspólnego czynnika', pts: 2,
-      text: t`Rozwiąż równanie ${M(`${poly([a, 0, -a * k * k, 0])} = 0`)}. Podaj wszystkie rozwiązania.`,
-      fields: [F('Najmniejsze:', -k), F('Środkowe:', 0), F('Największe:', k)],
-      hints: [t`Wyłącz przed nawias wspólny czynnik ${M(poly([a, 0]))}.`, t`W nawiasie zostanie ${M(`x^2 - ${k * k}`)}, czyli różnica kwadratów: ${M(t`(x - ${k})(x + ${k})`)}.`],
-      steps: [M(t`${poly([a, 0])}\left(x^2 - ${k * k}\right) = 0`), M(t`${poly([a, 0])}(x - ${k})(x + ${k}) = 0`), M(t`x = 0\quad\text{lub}\quad x = ${k}\quad\text{lub}\quad x = ${-k}`)],
-      answer: M(t`x \in \{${-k},\ 0,\ ${k}\}`), check: () => [-k, 0, k].every(x => near(a * x * x * x - a * k * k * x, 0)) });
+  function factoredQuad() {
+    const r1 = ri(-6, 4), r2 = r1 + ri(1, 6), a = pick([-7, -6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6, 7]), b = -(r1 + r2), c = r1 * r2; need(a !== r1 && a !== r2 && b !== 0 && c !== 0);
+    const rs = [a, r1, r2].sort((u, v) => u - v);
+    return mk({ skill: 'postać iloczynowa z trójmianem kwadratowym', pts: 3,
+      text: t`Rozwiąż równanie ${M(`${xm(a)}(${poly([1, b, c])}) = 0`)}. Podaj wszystkie rozwiązania.`,
+      fields: [F('Najmniejsze:', rs[0]), F('Środkowe:', rs[1]), F('Największe:', rs[2])],
+      hints: [t`Iloczyn jest zerem, gdy któryś czynnik jest zerem: ${M(t`x${pm(-a)} = 0`)} lub ${M(`${poly([1, b, c])} = 0`)}. Nie wymnażaj nawiasów.`, t`Pierwszy czynnik daje ${M(`x = ${a}`)}. Drugi to równanie kwadratowe – policz deltę: ${M(t`\Delta = ${b * b - 4 * c}`)}.`],
+      steps: [t`${M(t`x${pm(-a)} = 0`)}, stąd ${M(`x = ${a}`)}.`, t`${M(`${poly([1, b, c])} = 0`)}:`].concat(quadSteps(1, b, c), [t`Wszystkie rozwiązania: ${M(rs.join(',\\ '))}.`]),
+      answer: M(t`x \in \{${rs.join(',\\ ')}\}`), check: () => rs.every(x => near((x - a) * qv(1, b, c, x), 0)) && new Set(rs).size === 3 });
   },
   function rationalZero() {
     const k = ri(2, 9), minus = Math.random() < 0.5, sol = minus ? -k : k;
@@ -267,25 +268,15 @@ const GW = {
   }
 ],
 3: [
-  function grouping() {
-    const a = nz(-6, 6), three = Math.random() < 0.6;
-    if (three) {
-      const k = ri(1, 5); need(Math.abs(a) !== k);
-      const rs = [-a, -k, k].sort((u, v) => u - v), cs = [1, a, -k * k, -a * k * k];
-      return mk({ skill: 'równanie wielomianowe – grupowanie', pts: 3,
-        text: t`Rozwiąż równanie ${M(`${poly(cs)} = 0`)}. Podaj wszystkie rozwiązania.`,
-        fields: [F('Najmniejsze:', rs[0]), F('Środkowe:', rs[1]), F('Największe:', rs[2])],
-        hints: [t`Pogrupuj wyrazy parami: z pierwszych dwóch wyłącz ${M('x^2')}, z dwóch ostatnich liczbę ${M(-k * k)}.`, t`W obu grupach pojawi się ten sam nawias ${M(xm(-a))} – wyłącz go: ${M(t`${xm(-a)}(x^2 - ${k * k}) = 0`)}.`],
-        steps: [M(t`x^2${xm(-a)} - ${k * k}${xm(-a)} = 0`), M(t`${xm(-a)}\left(x^2 - ${k * k}\right) = 0`), M(t`${xm(-a)}(x - ${k})(x + ${k}) = 0`), M(t`x = ${-a}\quad\text{lub}\quad x = ${k}\quad\text{lub}\quad x = ${-k}`)],
-        answer: M(t`x \in \{${rs.join(',\\ ')}\}`), check: () => rs.every(x => near(cs[0] * x ** 3 + cs[1] * x * x + cs[2] * x + cs[3], 0)) && new Set(rs).size === 3 });
-    }
-    const m = ri(1, 9), cs = [1, a, m, a * m];
-    return mk({ skill: 'równanie wielomianowe – grupowanie', pts: 3,
-      text: t`Równanie ${M(`${poly(cs)} = 0`)} ma dokładnie jedno rozwiązanie rzeczywiste. Wyznacz to rozwiązanie.`,
-      fields: [F(M('x ='), -a)],
-      hints: [t`Pogrupuj wyrazy parami: z pierwszych dwóch wyłącz ${M('x^2')}, z dwóch ostatnich liczbę ${M(m)}.`, t`Otrzymasz ${M(t`${xm(-a)}(x^2 + ${m}) = 0`)}. Czy ${M(`x^2 + ${m}`)} może być zerem?`],
-      steps: [M(t`x^2${xm(-a)} + ${m}${xm(-a)} = 0`), M(t`${xm(-a)}\left(x^2 + ${m}\right) = 0`), t`${M(t`x^2 + ${m} > 0`)} dla każdego ${M('x')}, więc zostaje ${M(t`x${pm(a)} = 0`)}, czyli ${M(`x = ${-a}`)}.`],
-      answer: M(`x = ${-a}`), check: () => { const x = -a; return near(x ** 3 + a * x * x + m * x + a * m, 0); } });
+  function factoredHard() {
+    const q = pick([2, 3, 4]), p = pick([-9, -7, -5, -3, -1, 1, 3, 5, 7, 9]), k = ri(1, 5), m = pick([1, 2, 3, 4, 5, 7]); need(gcd(Math.abs(p), q) === 1);
+    const rs = [p / q, -k, k].sort((u, v) => u - v), fs = shuffle([`(${poly([q, -p])})`, `(x^2 - ${k * k})`, `(x^2 + ${m})`]).join('');
+    return mk({ skill: 'równanie wielomianowe w postaci iloczynowej', pts: 2,
+      text: t`Dane jest równanie ${M(`${fs} = 0`)}. Wyznacz najmniejsze i największe rozwiązanie tego równania.`,
+      fields: [F('Najmniejsze rozwiązanie:', rs[0]), F('Największe rozwiązanie:', rs[2])],
+      hints: [t`Przyrównaj każdy czynnik osobno do zera. Jeden z nich nigdy nie jest zerem – który?`, t`${M(`x^2 + ${m} > 0`)} dla każdego ${M('x')}. Zostają ${M(`${poly([q, -p])} = 0`)} oraz ${M(`x^2 - ${k * k} = 0`)}.`],
+      steps: [t`${M(`${poly([q, -p])} = 0`)}, stąd ${M(`x = ${TF(p / q)}`)}.`, t`${M(`x^2 - ${k * k} = 0`)}, stąd ${M(`x = ${k}`)} lub ${M(`x = ${-k}`)}.`, t`${M(`x^2 + ${m} = 0`)} nie ma rozwiązań.`, t`Rozwiązania w kolejności rosnącej: ${M(rs.map(TF).join(',\\ '))}.`],
+      answer: M(t`${TF(rs[0])}\ \text{oraz}\ ${TF(rs[2])}`), check: () => rs.every(x => near((q * x - p) * (x * x - k * k) * (x * x + m), 0)) && rs[0] < rs[1] && rs[1] < rs[2] });
   },
   function rationalFact() {
     const [a, b, c, d] = shuffle([-6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6, 7]).slice(0, 4), lo = Math.min(a, c), hi = Math.max(a, c);
@@ -310,7 +301,7 @@ MATURA.dzial({
   formulas: {
     L: [['równanie liniowe', r`wyrazy z \(x\) na jedną stronę, liczby na drugą; przy przenoszeniu zmieniamy znak`], ['nierówność liniowa', r`mnożąc lub dzieląc obie strony przez liczbę <b>ujemną</b>, zmieniamy zwrot nierówności`], ['układ równań', r`metoda podstawiania albo przeciwnych współczynników`], ['ile rozwiązań ma układ', r`proste przecinające się: jedno<br>proste równoległe różne: brak (układ sprzeczny)<br>proste pokrywające się: nieskończenie wiele`]],
     K: [['wyróżnik', r`\(\Delta = b^2 - 4ac\)`], ['pierwiastki', r`\(x_1 = \dfrac{-b - \sqrt\Delta}{2a},\quad x_2 = \dfrac{-b + \sqrt\Delta}{2a}\)<br>gdy \(\Delta = 0\): \(x_0 = \dfrac{-b}{2a}\)`], ['liczba rozwiązań', r`\(\Delta > 0\): dwa, \(\Delta = 0\): jedno, \(\Delta < 0\): brak`], ['postać iloczynowa', r`\(a(x - x_1)(x - x_2)\)`], ['nierówność kwadratowa', r`1. miejsca zerowe, 2. szkic paraboli (ramiona w górę dla \(a > 0\)), 3. odczytaj, gdzie wykres jest nad lub pod osią \(Ox\)`]],
-    W: [['iloczyn równy zero', r`\(A\cdot B\cdot C = 0\) wtedy, gdy \(A = 0\) lub \(B = 0\) lub \(C = 0\)`], ['różnica kwadratów', r`\(x^2 - k^2 = (x - k)(x + k)\)<br>\(x^2 + k^2 > 0\), brak miejsc zerowych`], ['grupowanie', r`\(x^3 + ax^2 + bx + ab = x^2(x + a) + b(x + a) = (x + a)(x^2 + b)\)`], ['równanie wymierne', r`\(\dfrac{V(x)}{W(x)} = 0\) wtedy, gdy \(V(x) = 0\) i \(W(x) \neq 0\)<br>zawsze zacznij od dziedziny`]]
+    W: [['iloczyn równy zero', r`\(A\cdot B\cdot C = 0\) wtedy, gdy \(A = 0\) lub \(B = 0\) lub \(C = 0\)`], ['różnica kwadratów', r`\(x^2 - k^2 = (x - k)(x + k)\)<br>\(x^2 + k^2 > 0\), brak miejsc zerowych`], ['czynnik kwadratowy', r`czynnik \(x^2 + bx + c\) rozwiązuj jak zwykłe równanie kwadratowe (delta)`], ['równanie wymierne', r`\(\dfrac{V(x)}{W(x)} = 0\) wtedy, gdy \(V(x) = 0\) i \(W(x) \neq 0\)<br>zawsze zacznij od dziedziny`]]
   }
 });
 })();

@@ -123,6 +123,8 @@ function poly(cs, v = 'x') {
   });
   return s || '0';
 }
+/* wielomian ze znakiem na początku: " + 2x - 3" */
+const sp = (cs, v) => { const q = poly(cs, v); return q[0] === '-' ? ' - ' + q.slice(1) : ' + ' + q; };
 /* (x - 3), (x + 2), x */
 const xm = (r, v = 'x') => (r === 0 ? v : `(${v}${pm(-r)})`);
 /* przedziały: IV(a, b, domkLewy, domkPrawy) */
@@ -199,6 +201,7 @@ function generate(cfg, topic, level, avoid) {
 function clean(raw) { return normalize(String(raw).replace(/\s*(%|zł|zl|lat|lata|szt\.?|kg|g|l|osób|osoby)\s*$/i, '')); }
 function checkField(field, raw) {
   if (!String(raw).trim()) return 'empty';
+  if (field.unit && field.unit.indexOf('π') >= 0) raw = String(raw).replace(/\s*[·*]?\s*(π|pi)\s*$/i, '');
   const s = clean(raw); let v;
   try { v = s ? evalExpr(s) : NaN; } catch (e) { v = NaN; }
   if (!Number.isFinite(v)) return 'invalid';
@@ -219,7 +222,7 @@ const QUIPS = {
   streak: { 3: 'Trzy z rzędu. Hat-trick!', 5: 'Pięć z rzędu. Ktoś tu się rozkręca.', 10: 'Dziesięć z rzędu! Może czas na poziom wyżej?', 15: 'Piętnaście z rzędu. CKE prosi o litość.', 20: 'Dwadzieścia z rzędu. To już nie seria, to styl życia.' }
 };
 
-if (typeof module !== 'undefined') module.exports = { DOK, PF, zl, t, ri, pick, shuffle, near, gcd, isInt, frac, D, T, TF, N, P, M, txt, R, rv, rt, rx, sq, mk, F, pm, poly, xm, IV, UN, INF, opts, plot, RETRY, need, MATURA, generate, checkField, clean, evalExpr, normalize, LEVEL_NAME, QUIPS };
+if (typeof module !== 'undefined') module.exports = { sp, DOK, PF, zl, t, ri, pick, shuffle, near, gcd, isInt, frac, D, T, TF, N, P, M, txt, R, rv, rt, rx, sq, mk, F, pm, poly, xm, IV, UN, INF, opts, plot, RETRY, need, MATURA, generate, checkField, clean, evalExpr, normalize, LEVEL_NAME, QUIPS };
 
 /* ====== Interfejs ====== */
 MATURA.dzial = function (cfg) {

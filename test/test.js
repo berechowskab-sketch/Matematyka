@@ -3,7 +3,7 @@
 const path = require('path');
 const S = require(path.join(__dirname, '..', 'js', 'silnik.js'));
 Object.assign(globalThis, S);
-const IDS = (process.env.DZIALY || 'liczby,rownania,funkcje').split(',');
+const IDS = process.env.DZIALY ? process.env.DZIALY.split(',') : require('fs').readdirSync(path.join(__dirname, '..', 'js')).filter(f => f.endsWith('.js') && f !== 'silnik.js').map(f => f.slice(0, -3)).sort();
 const RUNS = +process.argv[2] || 400;
 let total = 0, gens = 0; const errs = [];
 for (const id of IDS) {
@@ -25,7 +25,7 @@ for (const id of IDS) {
           const all = JSON.stringify([tk.text, tk.hints, tk.steps, tk.answer, tk.choices, tk.tf, tk.fields]);
           if (/undefined|NaN|Infinity|\[object/.test(all.replace(/"(fig|check|unit)":null/g, ''))) bad('śmieci w tekście: ' + (all.match(/.{0,40}(undefined|NaN|Infinity|\[object).{0,40}/) || [all.slice(0, 80)])[0]);
           if ((all.match(/\\\\\(/g) || []).length !== (all.match(/\\\\\)/g) || []).length) bad('niesparowane \\( \\)');
-          if (/(\+\s*-|-\s*-\d|\+\s*\+|(?<![\d},.])\b1[xy]\b)/.test(String(tk.text) + tk.steps.join(' ') + tk.answer)) bad('brzydki zapis: ' + (String(tk.text) + tk.steps.join(' ') + tk.answer).match(/.{0,30}(\+\s*-|-\s*-\d|\+\s*\+|\b1[xy]\b).{0,30}/)[0]);
+          if (/(\+\s*-|-\s*-\d|\+\s*\+|(?<![\d},.])\b1[xyma]\b)/.test(String(tk.text) + tk.steps.join(' ') + tk.answer)) bad('brzydki zapis: ' + (String(tk.text) + tk.steps.join(' ') + tk.answer).match(/.{0,30}(\+\s*-|-\s*-\d|\+\s*\+|\b1[xyma]\b).{0,30}/)[0]);
           if (!tk.text || !tk.skill || !tk.answer) bad('brak treści/umiejętności/odpowiedzi');
           if (tk.hints.length !== 2) bad('liczba podpowiedzi: ' + tk.hints.length);
           if (!tk.steps.length) bad('brak kroków rozwiązania');
